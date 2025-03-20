@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Asclepius</string>
+    <string name="camera_x">CameraX</string>
+    <string name="camera">Kamera</string>
+    <string name="gallery">Galeri</string>
+    <string name="analyze">Analyze</string>
+    <string name="result">Hasil Analisis</string>
+    <string name="tflite_initialization_with_gpu_delegate_failed">Tflite Initialization with GPU Delegate failed..</string>
+    <string name="permission_granted_will_proceed">Permission Granted. Will Proceed..</string>
+    <string name="need_permission_to_use_this_feature">Need Permission to Use this Feature</string>
+    <string name="please_select_an_image_first">Please Select an Image First..</string>
+    <string name="sorry_something_went_wrong_pleasy_try_again">Sorry something went wrong, pleasy try again..</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="riwayat">History</string>
+    <string name="prediksi">Analysis</string>
+    <string name="informasi">Information</string>
+    <string name="save">Save</string>
+    <string name="session_name">[\tSession Name\t]</string>
+    <string name="session_name_can_t_be_empty">Session name can\'t be empty!</string>
+    <string name="done">Done</string>
+    <string name="cancel">Cancel</string>
+    <string name="give_this_session_a_name_before_saving_it">Give this session a name before saving it!</string>
+    <string name="prediction_result_is_saved">Prediction Result is Saved</string>
+    <string name="search_your_session_history_here">Search your session history here..</string>
+    <string name="something_went_wrong_try_again">Something went wrong, Try Again..</string>
+    <string name="author">Author</string>
+    <string name="some_interesting_information_about_cancer_that_you_might_want_to_know">Some Interesting Information About Cancer That You Might Want To Know</string>
+</resources>
