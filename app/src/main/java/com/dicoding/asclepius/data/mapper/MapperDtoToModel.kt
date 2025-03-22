@@ -2,7 +2,6 @@ package com.dicoding.asclepius.data.mapper
 
 import com.dicoding.asclepius.data.local.PredictionHistoryEntity
 import com.dicoding.asclepius.data.remote.ArticlesItem
-import com.dicoding.asclepius.data.remote.HealthNewsCancerDto
 import com.dicoding.asclepius.data.utils.timestampToDateString
 import com.dicoding.asclepius.domain.model.CancerNewsPreview
 import com.dicoding.asclepius.domain.model.ModelOutput
@@ -13,7 +12,7 @@ object MapperDtoToModel {
 
     fun mapPredictionHistoryEntity(
         predictionHistoryEntity: PredictionHistoryEntity
-    ):PredictionHistory{
+    ): PredictionHistory {
         val dateString = predictionHistoryEntity.timestamp.timestampToDateString()
 
         return PredictionHistory(
@@ -29,8 +28,8 @@ object MapperDtoToModel {
     }
 
     fun mapHealthNewsCancerDto(
-        articlesItemsDto:List<ArticlesItem?>?
-    ):List<CancerNewsPreview>{
+        articlesItemsDto: List<ArticlesItem?>?
+    ): List<CancerNewsPreview> {
         return articlesItemsDto?.map {
             CancerNewsPreview(
                 title = it?.title ?: "",

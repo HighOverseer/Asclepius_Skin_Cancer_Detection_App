@@ -17,7 +17,7 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideHealthApiService():HealthApiService{
+    fun provideHealthApiService(): HealthApiService {
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())

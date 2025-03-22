@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -19,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PredictionHistoryViewModel @Inject constructor(
     private val repository: Repository
-):ViewModel() {
+) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
@@ -33,7 +32,7 @@ class PredictionHistoryViewModel @Inject constructor(
             initialValue = PagingData.empty()
         )
 
-    fun searchHistories(query:String){
+    fun searchHistories(query: String) {
         _searchQuery.value = query
     }
 }

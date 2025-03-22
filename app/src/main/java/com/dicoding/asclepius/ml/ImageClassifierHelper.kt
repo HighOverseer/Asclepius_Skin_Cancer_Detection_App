@@ -22,26 +22,26 @@ import org.tensorflow.lite.task.gms.vision.classifier.ImageClassifier.ImageClass
 
 
 class ImageClassifierHelper(
-    private val threshold:Float = ModelConstants.THRESHOLD,
-    private val maxResults:Int = ModelConstants.MAX_RESULTS,
-    private val modelName:String = ModelConstants.MODEL_NAME,
-    private val context:Context,
+    private val threshold: Float = ModelConstants.THRESHOLD,
+    private val maxResults: Int = ModelConstants.MAX_RESULTS,
+    private val modelName: String = ModelConstants.MODEL_NAME,
+    private val context: Context,
     private val classificationListener: ClassifierListener? = null
 ) {
 
-    private var imageClassifier:ImageClassifier? = null
-    
+    private var imageClassifier: ImageClassifier? = null
+
     init {
         TfLiteGpu.isGpuDelegateAvailable(context).onSuccessTask { gpuAvailable ->
             val optionsBuilder = TfLiteInitializationOptions.builder()
-            
-            if (gpuAvailable){
+
+            if (gpuAvailable) {
                 optionsBuilder.setEnableGpuDelegateSupport(true)
             }
             TfLiteVision.initialize(context, optionsBuilder.build())
-        }.addOnSuccessListener { 
+        }.addOnSuccessListener {
             setupImageClassifier()
-        }.addOnFailureListener { 
+        }.addOnFailureListener {
             classificationListener?.onError(
                 context.getString(R.string.tflite_initialization_with_gpu_delegate_failed)
             )
@@ -49,17 +49,17 @@ class ImageClassifierHelper(
     }
 
     private fun setupImageClassifier() {
-       val optionsBuilder = ImageClassifierOptions.builder()
-           .setScoreThreshold(threshold)
-           .setMaxResults(maxResults)
+        val optionsBuilder = ImageClassifierOptions.builder()
+            .setScoreThreshold(threshold)
+            .setMaxResults(maxResults)
 
         val baseOptionsBuilder = BaseOptions.builder()
 
-        if(CompatibilityList().isDelegateSupportedOnThisDevice){
+        if (CompatibilityList().isDelegateSupportedOnThisDevice) {
             baseOptionsBuilder.useGpu()
-        }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1){
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             baseOptionsBuilder.useNnapi()
-        }else{
+        } else {
             baseOptionsBuilder.setNumThreads(4)
         }
 
@@ -71,7 +71,7 @@ class ImageClassifierHelper(
                 modelName,
                 optionsBuilder.build()
             )
-        }catch (e:IllegalStateException){
+        } catch (e: IllegalStateException) {
             classificationListener?.onError(e.message.toString())
             e.printStackTrace()
         }
@@ -80,7 +80,7 @@ class ImageClassifierHelper(
     fun classifyStaticImage(imageUri: Uri) {
         // TODO: mengklasifikasikan imageUri dari gambar statis.
 
-        if (imageClassifier == null){
+        if (imageClassifier == null) {
             setupImageClassifier()
         }
 
@@ -90,7 +90,8 @@ class ImageClassifierHelper(
             .add(
                 ResizeOp(
                     ModelConstants.RESIZING_DIMENSION,
-                    ModelConstants.RESIZING_DIMENSION, ResizeOp.ResizeMethod.BILINEAR)
+                    ModelConstants.RESIZING_DIMENSION, ResizeOp.ResizeMethod.BILINEAR
+                )
             )
             .add(CastOp(DataType.FLOAT32))
             .build()
@@ -108,12 +109,12 @@ class ImageClassifierHelper(
         )
     }
 
-    interface ClassifierListener{
+    interface ClassifierListener {
         fun onResult(
-            results:List<Classifications>?,
-            inferenceTime:Long
+            results: List<Classifications>?,
+            inferenceTime: Long
         )
 
-        fun onError(error:String)
+        fun onError(error: String)
     }
 }

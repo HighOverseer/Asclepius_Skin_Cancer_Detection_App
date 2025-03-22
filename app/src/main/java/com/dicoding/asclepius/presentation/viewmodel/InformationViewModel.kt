@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class InformationViewModel @Inject constructor(
     private val repository: Repository
-): ViewModel() {
+) : ViewModel() {
 
     private val _cancerNews = MutableStateFlow<List<CancerNewsPreview>>(emptyList())
     val cancerNews = _cancerNews
@@ -34,13 +34,14 @@ class InformationViewModel @Inject constructor(
     private val _uiEvent = Channel<InformationUIEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    private fun loadCancerNews(){
+    private fun loadCancerNews() {
         viewModelScope.launch {
-            when(val resource = repository.getNewsAboutCancer()){
+            when (val resource = repository.getNewsAboutCancer()) {
                 is Resource.Success -> {
                     _cancerNews.value = resource.data
                     _uiEvent.send(InformationUIEvent.SuccessLoadingInitialData(resource.message))
                 }
+
                 is Resource.Error -> {
                     _uiEvent.send(
                         InformationUIEvent.FailedLoadingInitialData(
@@ -48,6 +49,7 @@ class InformationViewModel @Inject constructor(
                         )
                     )
                 }
+
                 is Resource.Failure -> {
                     _uiEvent.send(
                         InformationUIEvent.FailedLoadingInitialData(

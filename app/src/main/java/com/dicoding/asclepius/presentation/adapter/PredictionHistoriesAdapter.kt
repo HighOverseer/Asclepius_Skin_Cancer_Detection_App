@@ -1,6 +1,5 @@
 package com.dicoding.asclepius.presentation.adapter
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -13,14 +12,15 @@ import com.dicoding.asclepius.presentation.utils.formatToPercentage
 import com.dicoding.asclepius.presentation.utils.loadImage
 
 class PredictionHistoriesAdapter(
-    private val onItemClick:(PredictionHistory) -> Unit
-) :PagingDataAdapter<PredictionHistory, PredictionHistoriesAdapter.PredictionHistoryViewHolder>(
-    DIFF_CALLBACK) {
+    private val onItemClick: (PredictionHistory) -> Unit
+) : PagingDataAdapter<PredictionHistory, PredictionHistoriesAdapter.PredictionHistoryViewHolder>(
+    DIFF_CALLBACK
+) {
 
     class PredictionHistoryViewHolder(
-        val binding:ItemPredictionHistoryBinding,
-        clickedAtPosition:(Int) -> Unit
-    ):ViewHolder(binding.root){
+        val binding: ItemPredictionHistoryBinding,
+        clickedAtPosition: (Int) -> Unit
+    ) : ViewHolder(binding.root) {
         init {
             itemView.setOnClickListener {
                 clickedAtPosition(absoluteAdapterPosition)
@@ -62,9 +62,8 @@ class PredictionHistoriesAdapter(
     }
 
 
-
-    companion object{
-        val DIFF_CALLBACK = object: DiffUtil.ItemCallback<PredictionHistory>(){
+    companion object {
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<PredictionHistory>() {
             override fun areItemsTheSame(
                 oldItem: PredictionHistory,
                 newItem: PredictionHistory

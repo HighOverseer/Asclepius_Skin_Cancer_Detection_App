@@ -2,16 +2,15 @@ package com.dicoding.asclepius.presentation.utils
 
 import android.content.Context
 import android.net.Uri
-import android.os.Build
 
 const val AUTHORITY = "com.dicoding.asclepius.fileprovider"
 
-class ImageCaptureHandler{
+class ImageCaptureHandler {
     var latestImageCapturedUri: Uri? = null
 
 
-    fun provideCapturedImageUri(context: Context):Uri{
-        val uri:Uri
+    fun provideCapturedImageUri(context: Context): Uri {
+        val uri: Uri
 
         val fileName = getFileName()
 
@@ -21,7 +20,7 @@ class ImageCaptureHandler{
         return uri
     }
 
-    fun clearLatestCapturedImageUri(context: Context){
+    fun clearLatestCapturedImageUri(context: Context) {
         latestImageCapturedUri?.let {
             deleteFromFileProvider(context, it)
         }

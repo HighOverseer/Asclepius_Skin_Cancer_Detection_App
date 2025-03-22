@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
     entities = [PredictionHistoryEntity::class],
     version = 1,
 )
-abstract class AppDatabase:RoomDatabase() {
+abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun predictionHistoryDao():PredictionHistoryDao
+    abstract fun predictionHistoryDao(): PredictionHistoryDao
 }

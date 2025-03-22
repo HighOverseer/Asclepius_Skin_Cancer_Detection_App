@@ -3,16 +3,12 @@ package com.dicoding.asclepius.data.mapper
 import com.dicoding.asclepius.data.local.PredictionHistoryEntity
 import com.dicoding.asclepius.data.utils.dateStringToTimestamp
 import com.dicoding.asclepius.domain.model.PredictionHistory
-import com.dicoding.asclepius.domain.utils.DomainConstants
-import java.text.SimpleDateFormat
-import java.util.Locale
-import javax.inject.Singleton
 
 
 object MapperModelToDto {
     fun mapPredictionHistory(
         predictionHistory: PredictionHistory
-    ):PredictionHistoryEntity?{
+    ): PredictionHistoryEntity? {
 
         val timestamp = predictionHistory.date.dateStringToTimestamp()
 

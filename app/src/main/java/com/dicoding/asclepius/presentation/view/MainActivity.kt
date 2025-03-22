@@ -1,17 +1,13 @@
 package com.dicoding.asclepius.presentation.view
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.findFragment
-import com.dicoding.asclepius.R
 import com.dicoding.asclepius.databinding.ActivityMainBinding
 import com.dicoding.asclepius.presentation.adapter.SectionsPagerAdapter
-import com.dicoding.asclepius.presentation.utils.loadImage
 import com.dicoding.asclepius.presentation.view.PredictionFragment.Companion.FLAG_IS_SESSION_SAVED
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
@@ -20,10 +16,10 @@ import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var sectionsPagerAdapter:SectionsPagerAdapter
+    private lateinit var sectionsPagerAdapter: SectionsPagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -43,7 +39,7 @@ class MainActivity : AppCompatActivity(){
 
             tabs.addOnTabSelectedListener(onTabSelectedListener)
 
-            TabLayoutMediator(tabs, viewPager){ tab, position ->
+            TabLayoutMediator(tabs, viewPager) { tab, position ->
                 val pageIndexes = SectionsPagerAdapter.PageIndex.entries
                 tab.text = getString(pageIndexes[position].titleResId)
             }.attach()
@@ -59,16 +55,17 @@ class MainActivity : AppCompatActivity(){
 
     val resultActivityLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ){ result ->
-        val fragment = sectionsPagerAdapter.getFragment(SectionsPagerAdapter.PageIndex.PREDICTION.pageIndex)
+    ) { result ->
+        val fragment =
+            sectionsPagerAdapter.getFragment(SectionsPagerAdapter.PageIndex.PREDICTION.pageIndex)
         (fragment as? PredictionFragment)?.clearSession()
 
-        if(result.resultCode == FLAG_IS_SESSION_SAVED){
+        if (result.resultCode == FLAG_IS_SESSION_SAVED) {
             binding.viewPager.setCurrentItem(SectionsPagerAdapter.PageIndex.HISTORY.pageIndex, true)
         }
     }
 
-    private val onTabSelectedListener = object : OnTabSelectedListener{
+    private val onTabSelectedListener = object : OnTabSelectedListener {
         override fun onTabSelected(tab: TabLayout.Tab?) {
             setSearchBarAnimationInPredictionHistoryFragment(true, tab)
         }
@@ -77,7 +74,10 @@ class MainActivity : AppCompatActivity(){
             setSearchBarAnimationInPredictionHistoryFragment(false, tab)
         }
 
-        private fun setSearchBarAnimationInPredictionHistoryFragment(isSlideIn:Boolean, tab: Tab?) {
+        private fun setSearchBarAnimationInPredictionHistoryFragment(
+            isSlideIn: Boolean,
+            tab: Tab?
+        ) {
             val position = tab?.position ?: return
 
             if (position == SectionsPagerAdapter.PageIndex.HISTORY.pageIndex) {
@@ -92,7 +92,6 @@ class MainActivity : AppCompatActivity(){
 
         override fun onTabReselected(tab: Tab?) {}
     }
-
 
 
     override fun onDestroy() {

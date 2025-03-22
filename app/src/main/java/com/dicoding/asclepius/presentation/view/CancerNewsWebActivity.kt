@@ -2,7 +2,6 @@ package com.dicoding.asclepius.presentation.view
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.webkit.JsResult
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -36,7 +35,7 @@ class CancerNewsWebActivity : AppCompatActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     private fun initViews() {
         val url = intent.getStringExtra(EXTRA_URL)
-        if(url == null){
+        if (url == null) {
             showToast(getString(R.string.sorry_something_went_wrong_pleasy_try_again))
             finish()
             return
@@ -49,13 +48,13 @@ class CancerNewsWebActivity : AppCompatActivity() {
                 finish()
             }
 
-            webView.webViewClient = object : WebViewClient(){
+            webView.webViewClient = object : WebViewClient() {
                 override fun doUpdateVisitedHistory(
                     view: WebView?,
                     url: String?,
                     isReload: Boolean
                 ) {
-                    if(url != tvWebUrl.text){
+                    if (url != tvWebUrl.text) {
                         tvWebUrl.text = url
                     }
                     super.doUpdateVisitedHistory(view, url, isReload)
@@ -64,13 +63,13 @@ class CancerNewsWebActivity : AppCompatActivity() {
             }
 
             webView.settings.javaScriptEnabled = true
-            webView.webChromeClient = object : WebChromeClient(){
+            webView.webChromeClient = object : WebChromeClient() {
                 override fun onProgressChanged(view: WebView?, newProgress: Int) {
                     super.onProgressChanged(view, newProgress)
                     progressBar.progress = newProgress
 
                     val isProgressBarVisible = newProgress != 100
-                    if(isProgressBarVisible != progressBar.isVisible){
+                    if (isProgressBarVisible != progressBar.isVisible) {
                         progressBar.isVisible = isProgressBarVisible
                     }
                 }
@@ -81,7 +80,7 @@ class CancerNewsWebActivity : AppCompatActivity() {
     }
 
 
-    companion object{
+    companion object {
         const val EXTRA_URL = "extra_url"
     }
 }

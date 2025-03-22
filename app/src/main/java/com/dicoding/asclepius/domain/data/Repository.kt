@@ -6,10 +6,10 @@ import com.dicoding.asclepius.domain.model.CancerNewsPreview
 import com.dicoding.asclepius.domain.model.PredictionHistory
 import kotlinx.coroutines.flow.Flow
 
-interface Repository{
+interface Repository {
 
     fun getPredictionHistories(
-        query:String = ""
+        query: String = ""
     ): Flow<PagingData<PredictionHistory>>
 
     suspend fun insertPredictionHistory(
@@ -18,7 +18,7 @@ interface Repository{
 
     suspend fun getNewsAboutCancer(): Resource<List<CancerNewsPreview>>
 
-    companion object{
+    companion object {
         const val PAGE_SIZE = 10
         const val ENABLE_PLACE_HOLDERS = true
 

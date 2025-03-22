@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
-import android.content.DialogInterface.OnCancelListener
 import android.content.DialogInterface.OnDismissListener
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -17,13 +16,13 @@ import com.dicoding.asclepius.R
 import com.dicoding.asclepius.databinding.DialogFragmentSessionBinding
 import com.dicoding.asclepius.presentation.utils.showToast
 
-class SessionDialogFragment:DialogFragment() {
+class SessionDialogFragment : DialogFragment() {
 
-    private var binding:DialogFragmentSessionBinding? = null
+    private var binding: DialogFragmentSessionBinding? = null
 
-    private var listener:OnDismissListener? = null
+    private var listener: OnDismissListener? = null
 
-    private var latestSessionName:String? = null
+    private var latestSessionName: String? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -40,7 +39,7 @@ class SessionDialogFragment:DialogFragment() {
 
     @SuppressLint("DialogFragmentCallbacksDetector")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog =  super.onCreateDialog(savedInstanceState)
+        val dialog = super.onCreateDialog(savedInstanceState)
         dialog.window?.setBackgroundDrawable(
             ColorDrawable(Color.TRANSPARENT)
         )
@@ -66,7 +65,7 @@ class SessionDialogFragment:DialogFragment() {
         binding?.apply {
             btnDone.setOnClickListener {
                 val sessionName = etSession.text?.toString()?.trim()
-                if(sessionName.isNullOrBlank()) {
+                if (sessionName.isNullOrBlank()) {
                     showToast(getString(R.string.session_name_can_t_be_empty))
                     return@setOnClickListener
                 }
@@ -99,8 +98,8 @@ class SessionDialogFragment:DialogFragment() {
         super.onDetach()
     }
 
-    interface OnDismissListener{
-        fun onDismiss(sessionName:String)
+    interface OnDismissListener {
+        fun onDismiss(sessionName: String)
     }
 
 }

@@ -1,6 +1,5 @@
 package com.dicoding.asclepius.presentation.viewmodel
 
-import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,7 +23,7 @@ import javax.inject.Inject
 class ResultViewModel @Inject constructor(
     private val repository: Repository,
     savedStateHandle: SavedStateHandle
-):ViewModel() {
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ResultUIState())
     val uiState: StateFlow<ResultUIState> = _uiState
@@ -34,25 +33,25 @@ class ResultViewModel @Inject constructor(
 
     var latestModelOutput: ModelOutput? = savedStateHandle[ResultActivity.EXTRA_OUTPUT]
     var latestImageUri: String? = savedStateHandle[ResultActivity.EXTRA_URI]
-    var isSaveAble:Boolean = savedStateHandle[ResultActivity.EXTRA_SAVEABLE] ?: false
+    var isSaveAble: Boolean = savedStateHandle[ResultActivity.EXTRA_SAVEABLE] ?: false
 
-    var latestSessionDate:String?= savedStateHandle[ResultActivity.EXTRA_DATE]
-    var latestSessionName:String?= savedStateHandle[ResultActivity.EXTRA_SESSION_NAME]
+    var latestSessionDate: String? = savedStateHandle[ResultActivity.EXTRA_DATE]
+    var latestSessionName: String? = savedStateHandle[ResultActivity.EXTRA_SESSION_NAME]
 
     init {
-        if(latestModelOutput == null || latestImageUri == null){
+        if (latestModelOutput == null || latestImageUri == null) {
             sendEvent(ResultUIEvent.FailedGettingProperExtras)
         }
 
-        if(!isSaveAble){
-            if(latestSessionDate == null || latestSessionName == null){
+        if (!isSaveAble) {
+            if (latestSessionDate == null || latestSessionName == null) {
                 sendEvent(ResultUIEvent.FailedGettingProperExtras)
             }
         }
     }
 
-    fun sendEvent(event:ResultUIEvent){
-        when(event){
+    fun sendEvent(event: ResultUIEvent) {
+        when (event) {
             ResultUIEvent.ShowSessionDialog -> {
                 _uiState.update {
                     it.copy(
@@ -60,7 +59,8 @@ class ResultViewModel @Inject constructor(
                     )
                 }
             }
-            else ->{}
+
+            else -> {}
         }
 
         viewModelScope.launch {
@@ -68,11 +68,11 @@ class ResultViewModel @Inject constructor(
         }
     }
 
-    fun insertPredictionHistory(sessionName:String){
+    fun insertPredictionHistory(sessionName: String) {
         val output = latestModelOutput
         val imageUri = latestImageUri
 
-        if(output == null || imageUri == null) return
+        if (output == null || imageUri == null) return
 
         viewModelScope.launch {
             _uiState.update {

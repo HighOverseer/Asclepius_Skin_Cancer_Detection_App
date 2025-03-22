@@ -8,15 +8,15 @@ import androidx.room.PrimaryKey
 data class PredictionHistoryEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo("id")
-    val id:Int = 0,
+    val id: Int = 0,
     @ColumnInfo("session_name")
-    val sessionName:String,
+    val sessionName: String,
     @ColumnInfo("image_uri")
-    val imageUri:String,
+    val imageUri: String,
     @ColumnInfo("label")
-    val label:String,
+    val label: String,
     @ColumnInfo("confidence_score")
-    val confidenceScore:Float,
+    val confidenceScore: Float,
     @ColumnInfo("timestamp")
-    val timestamp:Long
+    val timestamp: Long
 )

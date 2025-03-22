@@ -7,16 +7,18 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
-interface PredictionHistoryDao{
+interface PredictionHistoryDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPredictionHistory(
         predictionHistoryEntity: PredictionHistoryEntity
     )
 
-    @Query("""
+    @Query(
+        """
         SELECT * FROM prediction_history WHERE session_name LIKE '%' || :query || '%' ORDER BY timestamp DESC
-    """)
-    fun getPredictionHistories(query:String):PagingSource<Int, PredictionHistoryEntity>
+    """
+    )
+    fun getPredictionHistories(query: String): PagingSource<Int, PredictionHistoryEntity>
 
 }

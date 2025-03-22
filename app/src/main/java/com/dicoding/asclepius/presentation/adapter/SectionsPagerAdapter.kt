@@ -11,7 +11,7 @@ import com.dicoding.asclepius.presentation.view.PredictionFragment
 import com.dicoding.asclepius.presentation.view.PredictionHistoryFragment
 import java.lang.ref.WeakReference
 
-class SectionsPagerAdapter(activity:AppCompatActivity): FragmentStateAdapter(activity) {
+class SectionsPagerAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activity) {
     private val fragmentMap = SparseArray<WeakReference<Fragment>>()
 
     override fun getItemCount(): Int {
@@ -19,7 +19,7 @@ class SectionsPagerAdapter(activity:AppCompatActivity): FragmentStateAdapter(act
     }
 
     override fun createFragment(position: Int): Fragment {
-        val fragment: Fragment = when(position){
+        val fragment: Fragment = when (position) {
             PageIndex.HISTORY.pageIndex -> PredictionHistoryFragment()
             PageIndex.PREDICTION.pageIndex -> PredictionFragment()
             else -> InformationFragment()
@@ -34,11 +34,11 @@ class SectionsPagerAdapter(activity:AppCompatActivity): FragmentStateAdapter(act
         fragmentMap.clear()
     }
 
-    fun getFragment(position: Int):Fragment?{
+    fun getFragment(position: Int): Fragment? {
         return fragmentMap[position]?.get()
     }
 
-    enum class PageIndex(val pageIndex:Int, val titleResId:Int){
+    enum class PageIndex(val pageIndex: Int, val titleResId: Int) {
         HISTORY(0, R.string.riwayat),
         PREDICTION(1, R.string.prediksi),
         INFORMATION(2, R.string.informasi)

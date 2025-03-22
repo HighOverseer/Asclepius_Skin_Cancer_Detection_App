@@ -8,12 +8,12 @@ import com.dicoding.asclepius.BuildConfig
 import com.dicoding.asclepius.R
 import com.dicoding.asclepius.data.local.AppDatabase
 import com.dicoding.asclepius.data.mapper.MapperDtoToModel
-import com.dicoding.asclepius.domain.data.Repository
 import com.dicoding.asclepius.data.mapper.MapperModelToDto
 import com.dicoding.asclepius.data.remote.FailedResponseDto
 import com.dicoding.asclepius.data.remote.HealthApiService
 import com.dicoding.asclepius.domain.common.Resource
 import com.dicoding.asclepius.domain.common.StringRes
+import com.dicoding.asclepius.domain.data.Repository
 import com.dicoding.asclepius.domain.model.CancerNewsPreview
 import com.dicoding.asclepius.domain.model.PredictionHistory
 import com.google.gson.Gson
@@ -34,8 +34,8 @@ class RepositoryImpl @Inject constructor(
     private val mapperDtoToModel: MapperDtoToModel,
     private val mapperModelToDto: MapperModelToDto,
     private val healthApiService: HealthApiService,
-    private val gson:Gson
-): Repository {
+    private val gson: Gson
+) : Repository {
 
     private val predictionHistoryDao = appDatabase.predictionHistoryDao()
 
@@ -60,17 +60,17 @@ class RepositoryImpl @Inject constructor(
             val cancerNewsPreviews = mapperDtoToModel.mapHealthNewsCancerDto(filteredDto)
 
             return Resource.Success(cancerNewsPreviews)
-        }catch (e:HttpException){
+        } catch (e: HttpException) {
             val errorResponseBodyString = e.response()?.errorBody()?.string()
 
-            if(errorResponseBodyString?.contains("{") == false){
+            if (errorResponseBodyString?.contains("{") == false) {
                 return Resource.Failure(
                     StringRes.Dynamic(errorResponseBodyString)
                 )
             }
 
-            val responseType = object : TypeToken<FailedResponseDto>(){}.type
-            val errorResponse:FailedResponseDto = gson.fromJson(
+            val responseType = object : TypeToken<FailedResponseDto>() {}.type
+            val errorResponse: FailedResponseDto = gson.fromJson(
                 errorResponseBodyString,
                 responseType
             )
@@ -79,19 +79,19 @@ class RepositoryImpl @Inject constructor(
                 Resource.Failure(
                     message = StringRes.Dynamic(it)
                 )
-            }?: Resource.Failure(
+            } ?: Resource.Failure(
                 StringRes.Static(R.string.sorry_something_went_wrong_pleasy_try_again)
             )
 
-        }catch (e:Exception){
-            if(e is CancellationException) throw e
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
 
             return Resource.Error(e)
         }
     }
 
     override fun getPredictionHistories(
-        query:String
+        query: String
     ): Flow<PagingData<PredictionHistory>> {
         return Pager(
             config = PagingConfig(
@@ -110,7 +110,7 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun insertPredictionHistory(predictionHistory: PredictionHistory){
+    override suspend fun insertPredictionHistory(predictionHistory: PredictionHistory) {
         val predictionHistoryEntity = mapperModelToDto.mapPredictionHistory(
             predictionHistory
         )
