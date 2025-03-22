@@ -11,9 +11,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.registerForActivityResult
+import androidx.appcompat.app.AppCompatActivity.RESULT_CANCELED
 import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.dicoding.asclepius.R
 import com.dicoding.asclepius.databinding.FragmentPredictionBinding
 import com.dicoding.asclepius.presentation.utils.ImageCaptureHandler
@@ -22,6 +29,10 @@ import com.dicoding.asclepius.presentation.utils.convertImageUriToReducedBitmap
 import com.dicoding.asclepius.presentation.utils.loadImage
 import com.dicoding.asclepius.presentation.utils.showToast
 import com.dicoding.asclepius.domain.model.ModelOutput
+import com.dicoding.asclepius.presentation.utils.cancelRequest
+import com.dicoding.asclepius.presentation.utils.deleteFromFileProvider
+import com.dicoding.asclepius.presentation.utils.getFile
+import com.dicoding.asclepius.presentation.utils.getFileName
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
@@ -34,6 +45,9 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
     private var binding:FragmentPredictionBinding? = null
 
     private var currentImageUri: Uri? = null
+    //when user click cancel button on ucrop activity, see OnActivityResult
+    private var latestCroppedImageFilePath:String? = null
+
     private val imageCaptureHandler = ImageCaptureHandler()
 
     private lateinit var imageClassifierHelper: ImageClassifierHelper
@@ -46,6 +60,8 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
             context = requireContext().applicationContext,
             classificationListener = this
         )
+
+        requireActivity().lifecycle.addObserver(activityObserver)
     }
 
     override fun onCreateView(
@@ -59,6 +75,25 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
         )
         return binding?.root
     }
+
+    private val activityObserver = object : LifecycleEventObserver{
+        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+            when(event){
+                Lifecycle.Event.ON_DESTROY -> {
+                    binding?.previewImageView?.cancelRequest()
+                    imageCaptureHandler.clearLatestCapturedImageUri(
+                        requireContext()
+                    )
+                    currentImageUri?.let {
+                        deleteFromFileProvider(requireContext().applicationContext, it)
+                    }
+                    currentImageUri = null
+                }
+                else -> return
+            }
+        }
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -84,20 +119,33 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(data == null) return
+        imageCaptureHandler.clearLatestCapturedImageUri(
+            requireContext().applicationContext
+        )
 
-        if(resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP){
-            val resultImageUri = UCrop.getOutput(data)
-            currentImageUri = resultImageUri
-            showImage()
+        when{
+            resultCode == RESULT_CANCELED -> {
+                latestCroppedImageFilePath?.let {
+                    val canceledCroppedImageFile = File(it)
+                    if(canceledCroppedImageFile.exists()) canceledCroppedImageFile.delete()
+                }
+                latestCroppedImageFilePath = null
+            }
+            resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP -> {
+                if(data == null) return
 
-        }else if(resultCode == UCrop.RESULT_ERROR){
-            // so user can press the analyze button
-            currentImageUri = null
+                val resultImageUri = UCrop.getOutput(data) ?: return
+                currentImageUri = resultImageUri
+                showImage()
+            }
+            resultCode == UCrop.RESULT_ERROR -> {
+                if(data == null) return
 
-            val error = UCrop.getError(data)
-            error?.let {
-                showToast(it.message.toString())
+                val error = UCrop.getError(data)
+                error?.let {
+                    currentImageUri = null
+                    showToast(it.message.toString())
+                }
             }
         }
     }
@@ -117,12 +165,18 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
         }
     }
 
+
     private val cameraLauncher = registerForActivityResult(
         ActivityResultContracts.TakePicture()
     ){ isSuccess ->
-        if(!isSuccess) return@registerForActivityResult
+        if(!isSuccess) {
+            imageCaptureHandler.clearLatestCapturedImageUri(
+                requireContext().applicationContext
+            )
+            return@registerForActivityResult
+        }
 
-        currentImageUri = imageCaptureHandler.latestImageCaptured
+        currentImageUri = imageCaptureHandler.latestImageCapturedUri
 
         moveToCropActivity()
     }
@@ -130,18 +184,27 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
     private val galleryLauncher = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ){ imageUri ->
-        currentImageUri = imageUri
+        val isImageSelected = imageUri != null
+        if(isImageSelected){
+            currentImageUri = imageUri
+            moveToCropActivity()
+        }else {
+            clearSession()
+        }
 
-        moveToCropActivity()
     }
 
 
     private fun moveToCropActivity(){
-        currentImageUri?.let {
-            UCrop.of(it, Uri.fromFile(
-                File(requireContext().cacheDir, "cropped_image.jpg")))
-                .apply { this.start(requireContext(), this@PredictionFragment) }
-        }
+        val croppedImageFile = getFile(requireContext(), getFileName())
+        val currImageUri = currentImageUri ?: return
+
+        UCrop.of(currImageUri, Uri.fromFile(croppedImageFile))
+            .apply {
+                latestCroppedImageFilePath = croppedImageFile.absolutePath
+                this.start(requireContext(), this@PredictionFragment)
+            }
+
     }
 
     private fun analyzeImage() {
@@ -171,7 +234,6 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
                     currentImageUri?.let { imageUri ->
                         moveToResult(imageUri, output)
                     }
-
                 }
             }
         }
@@ -196,6 +258,11 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
 
     private fun startGallery() {
         // TODO: Mendapatkan gambar dari Gallery.
+        currentImageUri?.let {
+            deleteFromFileProvider(requireContext(), it)
+            clearSession()
+        }
+
         galleryLauncher.launch(
             PickVisualMediaRequest(
                 ActivityResultContracts.PickVisualMedia.ImageOnly
@@ -212,20 +279,28 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
         if(!isCameraPermissionGranted){
             askCameraPermission()
         }else{
-            val uri = imageCaptureHandler.getImageUri(requireContext().applicationContext)
+            currentImageUri?.let {
+                deleteFromFileProvider(requireContext(), it)
+                clearSession()
+            }
+
+            val uri = imageCaptureHandler.provideCapturedImageUri(requireContext().applicationContext)
             cameraLauncher.launch(uri)
         }
     }
 
     private fun moveToResult(imageUri: Uri, output: ModelOutput) {
+        val activity = requireActivity()
+
+        if(activity !is MainActivity) return
+
         val intent = Intent(requireActivity(), ResultActivity::class.java)
         intent.apply {
             putExtra(ResultActivity.EXTRA_URI, imageUri.toString())
             putExtra(ResultActivity.EXTRA_OUTPUT, output)
             putExtra(ResultActivity.EXTRA_SAVEABLE, true)
         }
-
-        startActivity(intent)
+        activity.resultActivityLauncher.launch(intent)
     }
 
     private fun askCameraPermission(){
@@ -237,4 +312,18 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
         binding = null
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        requireActivity().lifecycle.removeObserver(activityObserver)
+    }
+
+    fun clearSession(){
+        currentImageUri = null
+        binding?.previewImageView?.loadImage(R.drawable.ic_place_holder, isTransformImage = false)
+    }
+
+
+    companion object{
+        const val FLAG_IS_SESSION_SAVED = 100
+    }
 }

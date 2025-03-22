@@ -7,6 +7,7 @@
     tools:listitem="@layout/item_cancer_news"
     android:padding="16dp"
     android:clipToPadding="false"
+    android:background="@color/white_100"
     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".presentation.view.InformationFragment"/>

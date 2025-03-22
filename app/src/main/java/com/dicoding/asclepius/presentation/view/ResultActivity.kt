@@ -26,6 +26,8 @@ import com.dicoding.asclepius.domain.model.PredictionHistory
 import com.dicoding.asclepius.presentation.uievent.ResultUIEvent
 import com.dicoding.asclepius.presentation.utils.collectChannelFlowWhenStarted
 import com.dicoding.asclepius.presentation.utils.collectLatestOnLifeCycleStarted
+import com.dicoding.asclepius.presentation.utils.deleteFromFileProvider
+import com.dicoding.asclepius.presentation.utils.formatToPercentage
 import com.dicoding.asclepius.presentation.utils.getCurrentDateToString
 import com.dicoding.asclepius.presentation.viewmodel.ResultViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,6 +43,7 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDismissListe
 
     private val viewModel:ResultViewModel by viewModels()
 
+    private var didUserSavedTheSession:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -71,6 +74,8 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDismissListe
                         showDialog()
                     }
                     ResultUIEvent.SuccessSavingHistory -> {
+                        didUserSavedTheSession = true
+                        setResult(PredictionFragment.FLAG_IS_SESSION_SAVED)
                         showToast(getString(R.string.prediction_result_is_saved))
                         finish()
                     }
@@ -97,8 +102,7 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDismissListe
                 val compressedBitmap = this@ResultActivity
                     .convertImageUriToReducedBitmap(imageUri)
                 resultImage.loadImage(compressedBitmap)
-                resultText.text = "${output.label} " + NumberFormat.getPercentInstance()
-                    .format(output.confidenceScore)
+                resultText.text = "${output.label} " + output.confidenceScore.formatToPercentage()
             }
 
             ibBack.setOnClickListener {
@@ -123,6 +127,15 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDismissListe
                 tvSessionDate.text = sessionDate
             }
         }
+    }
+
+    override fun onDestroy() {
+        val imageUri = viewModel.latestImageUri
+        val isSaveAble = viewModel.isSaveAble
+        if(!didUserSavedTheSession && imageUri != null && isSaveAble){
+            deleteFromFileProvider(this, uri = Uri.parse(imageUri))
+        }
+        super.onDestroy()
     }
 
     private fun showDialog(){

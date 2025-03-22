@@ -3,6 +3,7 @@ package com.dicoding.asclepius.presentation.view
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -10,6 +11,8 @@ import androidx.fragment.app.findFragment
 import com.dicoding.asclepius.R
 import com.dicoding.asclepius.databinding.ActivityMainBinding
 import com.dicoding.asclepius.presentation.adapter.SectionsPagerAdapter
+import com.dicoding.asclepius.presentation.utils.loadImage
+import com.dicoding.asclepius.presentation.view.PredictionFragment.Companion.FLAG_IS_SESSION_SAVED
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayout.Tab
@@ -54,6 +57,17 @@ class MainActivity : AppCompatActivity(){
         supportActionBar?.elevation = 0f
     }
 
+    val resultActivityLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ){ result ->
+        val fragment = sectionsPagerAdapter.getFragment(SectionsPagerAdapter.PageIndex.PREDICTION.pageIndex)
+        (fragment as? PredictionFragment)?.clearSession()
+
+        if(result.resultCode == FLAG_IS_SESSION_SAVED){
+            binding.viewPager.setCurrentItem(SectionsPagerAdapter.PageIndex.HISTORY.pageIndex, true)
+        }
+    }
+
     private val onTabSelectedListener = object : OnTabSelectedListener{
         override fun onTabSelected(tab: TabLayout.Tab?) {
             setSearchBarAnimationInPredictionHistoryFragment(true, tab)
@@ -78,6 +92,8 @@ class MainActivity : AppCompatActivity(){
 
         override fun onTabReselected(tab: Tab?) {}
     }
+
+
 
     override fun onDestroy() {
         binding.tabs.removeOnTabSelectedListener(onTabSelectedListener)

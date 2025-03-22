@@ -1,21 +1,27 @@
 package com.dicoding.asclepius.presentation.utils
 
+import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
+import androidx.core.net.toFile
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestListener
 import com.dicoding.asclepius.domain.common.StringRes
 import com.dicoding.asclepius.domain.utils.DomainConstants
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +32,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -53,10 +61,26 @@ fun ImageView.loadImage(imageUri: Uri){
         .into(this)
 }
 
+fun ImageView.loadImage(@DrawableRes resourceId: Int, isTransformImage:Boolean = true){
+    Glide.with(context)
+        .load(resourceId)
+        .let {
+            if(!isTransformImage){
+                it.dontTransform()
+            }else it
+        }
+        .into(this)
+
+}
+
 fun ImageView.loadImage(imageUrl: String){
     Glide.with(context)
         .load(imageUrl)
         .into(this)
+}
+
+fun ImageView.cancelRequest(){
+    Glide.with(context).clear(this)
 }
 
 private const val MAX_IMAGE_SIZE_KB = 512 * 1000
@@ -84,6 +108,10 @@ suspend fun Context.convertImageUriToReducedBitmap(imageUri:Uri):Bitmap
 
     return@withContext BitmapFactory.decodeByteArray(compressedByteArray, 0, compressedByteArray.size)
 
+}
+
+fun Float.formatToPercentage():String{
+    return NumberFormat.getPercentInstance().format(this)
 }
 
 fun AppCompatActivity.showToast(message: String) {
@@ -120,6 +148,7 @@ fun <T> LifecycleOwner.collectChannelFlowWhenStarted(
     }
 }
 
+
 fun StringRes.getValue(context: Context):String{
     return when(this){
         is StringRes.Static -> {
@@ -129,4 +158,49 @@ fun StringRes.getValue(context: Context):String{
             value
         }
     }
+}
+
+private const val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
+
+fun getFileName():String{
+    val timeStamp = SimpleDateFormat(FILENAME_FORMAT, Locale.getDefault())
+    return "${timeStamp.format(Date())}_${System.currentTimeMillis()}.jpg"
+}
+
+fun getUriForAndroidQAbove(context: Context, fileName:String):Uri?{
+    val contentValues = ContentValues().apply {
+        put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+        put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
+        put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/MyCamera/")
+    }
+
+    return context.contentResolver.insert(
+        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+        contentValues
+    )
+}
+
+fun getUriForBelowAndroidQ(context: Context, fileName: String):Uri{
+    val imageFile = getFile(context, fileName)
+
+    return FileProvider.getUriForFile(
+        context,
+        AUTHORITY,
+        imageFile
+    )
+}
+
+fun getFile(context: Context, fileName:String):File{
+    val fileDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+    val imageFile = File(fileDir, "/$fileName")
+    if(imageFile.parentFile?.exists() == false) imageFile.parentFile?.mkdirs()
+
+    if(!imageFile.exists()) imageFile.createNewFile()
+
+    return imageFile
+}
+
+fun deleteFromFileProvider(context: Context, uri: Uri){
+    val file = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), uri.lastPathSegment ?: "")
+    if(file.exists()) file.delete()
 }

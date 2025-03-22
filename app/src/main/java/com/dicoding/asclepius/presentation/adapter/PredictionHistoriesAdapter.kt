@@ -1,5 +1,6 @@
 package com.dicoding.asclepius.presentation.adapter
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.dicoding.asclepius.databinding.ItemPredictionHistoryBinding
 import com.dicoding.asclepius.domain.model.PredictionHistory
+import com.dicoding.asclepius.presentation.utils.formatToPercentage
 import com.dicoding.asclepius.presentation.utils.loadImage
 
 class PredictionHistoriesAdapter(
@@ -49,7 +51,12 @@ class PredictionHistoriesAdapter(
 
         holder.binding.apply {
             imageView.loadImage(uri)
-            tvDate.text = predictionHistory.date
+            tvLabel.text = predictionHistory.modelOutput.label
+            tvConfidence.text = predictionHistory.modelOutput
+                .confidenceScore
+                .formatToPercentage()
+
+            tvSessionDate.text = predictionHistory.date
             tvSessionName.text = predictionHistory.sessionName
         }
     }
