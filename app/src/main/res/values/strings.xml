@@ -3,7 +3,7 @@
     <string name="camera_x">CameraX</string>
     <string name="camera">Kamera</string>
     <string name="gallery">Galeri</string>
-    <string name="predict">Predict</string>
+    <string name="analyze">Analyze</string>
     <string name="result">Hasil Analisis</string>
     <string name="tflite_initialization_with_gpu_delegate_failed">Tflite Initialization with GPU Delegate failed..</string>
     <string name="permission_granted_will_proceed">Permission Granted. Will Proceed..</string>

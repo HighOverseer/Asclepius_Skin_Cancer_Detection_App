@@ -99,7 +99,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_margin="4dp"
-                android:text="@string/predict"
+                android:text="@string/analyze"
                 android:textColor="@color/black_50"
                 app:layout_constraintWidth_percent="0.35"
                 app:icon="@drawable/ic_scan"
