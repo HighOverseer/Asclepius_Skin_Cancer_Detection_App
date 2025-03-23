@@ -5,5 +5,6 @@ data class PredictionHistory(
     val sessionName: String,
     val imageUri: String,
     val modelOutput: ModelOutput,
-    val date: String
+    val date: String,
+    val note:String
 )

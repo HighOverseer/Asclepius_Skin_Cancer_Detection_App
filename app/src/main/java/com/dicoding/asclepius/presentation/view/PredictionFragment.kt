@@ -56,6 +56,11 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
     private lateinit var imageClassifierHelper: ImageClassifierHelper
     private var loadImageJob: Job? = null
 
+    private val colorPrimary by lazy { requireContext().getColorFromAttr(android.R.attr.colorPrimary) }
+    private val white100 by lazy { ContextCompat.getColor(requireContext(), R.color.white_100) }
+    private val black50 by lazy { ContextCompat.getColor(requireContext(), R.color.black_50) }
+    private val darkerGray by lazy { ContextCompat.getColor(requireContext(), R.color.grey_200) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -122,12 +127,6 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
                 .applicationContext
                 .resources
                 .getStringArray(R.array.analyze_descriptions)
-
-
-            val colorPrimary = requireContext()
-                .getColorFromAttr(android.R.attr.colorPrimary)
-            val black50 = ContextCompat.getColor(requireContext(), R.color.black_50)
-            val darkerGray = ContextCompat.getColor(requireContext(), R.color.grey_200)
 
             val descriptionMaps = hashMapOf(
                 1 to colorPrimary, 3 to colorPrimary, 5 to black50
@@ -255,8 +254,17 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
         val croppedImageFile = getFile(requireContext(), getFileName())
         val currImageUri = currentImageUri ?: return
 
+
         UCrop.of(currImageUri, Uri.fromFile(croppedImageFile))
             .apply {
+                val options = UCrop.Options().apply {
+                    setToolbarColor(colorPrimary)
+                    setCropFrameColor(colorPrimary)
+                    setToolbarWidgetColor(white100)
+                    setActiveControlsWidgetColor(colorPrimary)
+                    setCropGridColor(colorPrimary)
+                }
+                withOptions(options)
                 latestCroppedImageFilePath = croppedImageFile.absolutePath
                 this.start(requireContext(), this@PredictionFragment)
             }

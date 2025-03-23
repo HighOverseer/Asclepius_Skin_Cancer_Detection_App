@@ -37,6 +37,7 @@ class ResultViewModel @Inject constructor(
 
     var latestSessionDate: String? = savedStateHandle[ResultActivity.EXTRA_DATE]
     var latestSessionName: String? = savedStateHandle[ResultActivity.EXTRA_SESSION_NAME]
+    var latestSessionNote: String? = savedStateHandle[ResultActivity.EXTRA_NOTE]
 
     init {
         if (latestModelOutput == null || latestImageUri == null) {
@@ -59,6 +60,13 @@ class ResultViewModel @Inject constructor(
                     )
                 }
             }
+            ResultUIEvent.SessionDialogCanceled -> {
+                _uiState.update {
+                    it.copy(
+                        isShowingDialog = false
+                    )
+                }
+            }
 
             else -> {}
         }
@@ -68,7 +76,7 @@ class ResultViewModel @Inject constructor(
         }
     }
 
-    fun insertPredictionHistory(sessionName: String) {
+    fun insertPredictionHistory(sessionName: String, note:String) {
         val output = latestModelOutput
         val imageUri = latestImageUri
 
@@ -87,7 +95,8 @@ class ResultViewModel @Inject constructor(
                     imageUri = imageUri,
                     modelOutput = output,
                     date = getCurrentDateToString(),
-                    sessionName = sessionName
+                    sessionName = sessionName,
+                    note = note
                 )
             )
 

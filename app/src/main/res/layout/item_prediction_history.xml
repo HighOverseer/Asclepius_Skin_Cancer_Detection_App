@@ -59,7 +59,7 @@
             android:id="@+id/tv_session_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/yd_yoonche_b"
+            android:fontFamily="@font/yd_yoonche_m"
             android:textAlignment="textEnd"
             android:textColor="@android:color/darker_gray"
             android:textSize="12sp"

@@ -18,5 +18,7 @@ data class PredictionHistoryEntity(
     @ColumnInfo("confidence_score")
     val confidenceScore: Float,
     @ColumnInfo("timestamp")
-    val timestamp: Long
+    val timestamp: Long,
+    @ColumnInfo("note")
+    val note: String
 )

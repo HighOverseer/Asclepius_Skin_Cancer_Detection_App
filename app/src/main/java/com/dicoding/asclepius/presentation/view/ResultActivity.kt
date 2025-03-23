@@ -1,21 +1,18 @@
 package com.dicoding.asclepius.presentation.view
 
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.dicoding.asclepius.R
-import com.dicoding.asclepius.databinding.ActivityResult2Binding
 import com.dicoding.asclepius.databinding.ActivityResultBinding
 import com.dicoding.asclepius.presentation.uievent.ResultUIEvent
 import com.dicoding.asclepius.presentation.utils.collectChannelFlowWhenStarted
@@ -30,10 +27,11 @@ import com.dicoding.asclepius.presentation.viewmodel.ResultViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.lang.ref.WeakReference
 
 @AndroidEntryPoint
-class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDismissListener {
-    private lateinit var binding: ActivityResult2Binding
+class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDialogEventListener {
+    private lateinit var binding: ActivityResultBinding
 
     private var loadImageJob: Job? = null
 
@@ -41,10 +39,12 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDismissListe
 
     private var didUserSavedTheSession: Boolean = false
 
+    private var progressIndicatorAnimation:WeakReference<ObjectAnimator>? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        binding = ActivityResult2Binding.inflate(layoutInflater)
+        binding = ActivityResultBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -85,6 +85,8 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDismissListe
                         showToast(getString(R.string.sorry_something_went_wrong_pleasy_try_again))
                         finish()
                     }
+
+                    else -> return@collectChannelFlowWhenStarted
                 }
             }
         }
@@ -107,50 +109,69 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDismissListe
         if (imageUri == null || output == null) return
 
         binding.apply {
+            content.apply {
+                toolbarLayout.setExpandedTitleColor(getColorFromAttr(android.R.attr.colorPrimary))
+                toolbarLayout.setCollapsedTitleTextColor(
+                    resources.getColor(
+                        R.color.white_100,
+                        null
+                    )
+                )
+                loadImageJob?.cancel()
+                loadImageJob = lifecycleScope.launch {
+                    val compressedBitmap = this@ResultActivity
+                        .convertImageUriToReducedBitmap(imageUri)
+                    resultImage.loadImage(compressedBitmap)
+                    resultText.text = output.confidenceScore.formatToPercentage()
+                    tvLabel.text = output.label
 
-            toolbarLayout.setExpandedTitleColor(getColorFromAttr(android.R.attr.colorPrimary))
-            toolbarLayout.setCollapsedTitleTextColor(resources.getColor(R.color.white_100, null))
-            loadImageJob?.cancel()
-            loadImageJob = lifecycleScope.launch {
-                val compressedBitmap = this@ResultActivity
-                    .convertImageUriToReducedBitmap(imageUri)
-                resultImage.loadImage(compressedBitmap)
-                content.resultText.text = output.confidenceScore.formatToPercentage()
-                content.tvLabel.text = output.label
-            }
+                    val progress = (output.confidenceScore * 100).toInt()
 
-//            ibBack.setOnClickListener {
-//                finish()
-//            }
+                    ObjectAnimator.ofInt(progressCircular, PROGRESS_INDICATOR_PROPERTY, 0, progress).apply {
+                        progressIndicatorAnimation = WeakReference(this)
+                        duration = PROGRESS_INDICATOR_ANIMATION_DURATION
+                        start()
+                    }
 
-
-            if (isSaveAble) {
-                content.tvInfoDate.isVisible = false
-                content.tvDate.isVisible = false
-                toolbarLayout.title = getString(R.string.hasil_analisis)
-                fabSave.setOnClickListener {
-                    viewModel.sendEvent(ResultUIEvent.ShowSessionDialog)
                 }
-            } else {
 
-                val sessionName = viewModel.latestSessionName
-                val sessionDate = viewModel.latestSessionDate
 
-                if (sessionName == null || sessionDate == null) return
+                if (isSaveAble) {
+                    tvInfoDate.isVisible = false
+                    tvDate.isVisible = false
+                    noteEtBg.isVisible = true
+                    etNote.isVisible = true
+                    noteTvBg.isVisible = false
+                    tvNote.isVisible = false
 
-                //TODO()
-                toolbarLayout.title = sessionName
-                content.tvDate.text = sessionDate
-//                tvSessionName.isVisible = true
-//                tvSessionDate.isVisible = true
-//
-//                tvSessionName.text = sessionName
-//                tvSessionDate.text = sessionDate
+                    toolbarLayout.title = getString(R.string.hasil_analisis)
+                    fabSave.setOnClickListener {
+                        viewModel.sendEvent(ResultUIEvent.ShowSessionDialog)
+                    }
+                } else {
+                    tvInfoDate.isVisible = true
+                    tvDate.isVisible = true
+                    noteEtBg.isVisible = false
+                    etNote.isVisible = false
+                    noteTvBg.isVisible = true
+                    tvNote.isVisible = true
+
+                    val sessionName = viewModel.latestSessionName
+                    val sessionDate = viewModel.latestSessionDate
+                    val sessionNote = viewModel.latestSessionNote?.ifBlank { "-" }
+
+                    if (sessionName == null || sessionDate == null || sessionNote == null) return
+
+                    toolbarLayout.title = sessionName
+                    tvDate.text = sessionDate
+                    tvNote.text = sessionNote
+                }
             }
         }
     }
 
     override fun onDestroy() {
+        progressIndicatorAnimation?.get()?.cancel()
         val imageUri = viewModel.latestImageUri
         val isSaveAble = viewModel.isSaveAble
         if (!didUserSavedTheSession && imageUri != null && isSaveAble) {
@@ -165,7 +186,12 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDismissListe
     }
 
     override fun onDismiss(sessionName: String) {
-        viewModel.insertPredictionHistory(sessionName)
+        val note = binding.content.etNote.text.toString().trim()
+        viewModel.insertPredictionHistory(sessionName, note)
+    }
+
+    override fun onCancel() {
+        viewModel.sendEvent(ResultUIEvent.SessionDialogCanceled)
     }
 
     companion object {
@@ -174,5 +200,9 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDismissListe
         const val EXTRA_SAVEABLE = "extra_saveable"
         const val EXTRA_DATE = "extra_date"
         const val EXTRA_SESSION_NAME = "extra_session_name"
+        const val EXTRA_NOTE = "extra_note"
+
+        private const val PROGRESS_INDICATOR_PROPERTY = "progress"
+        private const val PROGRESS_INDICATOR_ANIMATION_DURATION = 1000L
     }
 }

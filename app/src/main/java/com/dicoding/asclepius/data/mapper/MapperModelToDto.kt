@@ -18,7 +18,8 @@ object MapperModelToDto {
             imageUri = predictionHistory.imageUri,
             label = predictionHistory.modelOutput.label,
             confidenceScore = predictionHistory.modelOutput.confidenceScore,
-            timestamp = timestamp ?: return null
+            timestamp = timestamp ?: return null,
+            note = predictionHistory.note
         )
     }
 }

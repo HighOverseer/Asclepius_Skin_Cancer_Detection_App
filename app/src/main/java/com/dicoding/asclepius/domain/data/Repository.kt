@@ -22,6 +22,6 @@ interface Repository {
         const val PAGE_SIZE = 10
         const val ENABLE_PLACE_HOLDERS = true
 
-        const val CANCER_NEWS_REQUESTED_ITEM_COUNT = 10
+        const val CANCER_NEWS_REQUESTED_ITEM_COUNT = 20
     }
 }

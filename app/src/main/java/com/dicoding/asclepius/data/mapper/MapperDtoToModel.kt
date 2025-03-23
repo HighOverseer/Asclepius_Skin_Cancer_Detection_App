@@ -23,7 +23,8 @@ object MapperDtoToModel {
                 label = predictionHistoryEntity.label,
                 confidenceScore = predictionHistoryEntity.confidenceScore
             ),
-            date = dateString
+            date = dateString,
+            note = predictionHistoryEntity.note
         )
     }
 

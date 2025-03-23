@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/activity_result2"
+    tools:showIn="@layout/activity_result"
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -48,7 +48,8 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:trackColor="@color/black"
-            android:progress="60"
+            android:progress="0"
+            android:max="100"
             app:layout_constraintTop_toBottomOf="@id/tv_info_result"
             app:layout_constraintStart_toStartOf="@id/result_text"
             app:layout_constraintEnd_toEndOf="@id/result_text"
@@ -82,6 +83,81 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/progress_circular"
             android:textSize="24sp"/>
+
+        <TextView
+            android:id="@+id/tv_info_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Note"
+            android:fontFamily="@font/yd_yoonche_b"
+            android:textColor="@color/grey_200"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_label"
+            android:textSize="14sp"/>
+
+        <View
+            android:id="@+id/note_et_bg"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_info_note"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="@id/tv_info_note"
+            android:background="@drawable/rounded_white100_bg"
+            app:layout_constraintEnd_toEndOf="@id/tv_info_note"/>
+
+        <EditText
+            android:id="@+id/et_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:background="@null"
+            android:fontFamily="@font/yd_yoonche_b"
+            android:textColor="@color/black_50"
+            android:hint="@string/write_yout_note_here"
+            android:layout_marginHorizontal="16dp"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:lines="4"
+            android:gravity="top"
+            android:autofillHints="phone"
+            android:maxLines="6"
+            app:layout_constraintTop_toTopOf="@id/note_et_bg"
+            app:layout_constraintEnd_toEndOf="@id/note_et_bg"
+            app:layout_constraintStart_toStartOf="@id/note_et_bg"
+            app:layout_constraintBottom_toBottomOf="@id/note_et_bg"
+            tools:ignore="LabelFor" />
+
+        <View
+            android:id="@+id/note_tv_bg"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_info_note"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@id/tv_info_note"
+            android:background="@drawable/rounded_white100_bg"
+            app:layout_constraintEnd_toEndOf="@id/tv_info_note"/>
+
+        <TextView
+            android:id="@+id/tv_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="njknknjnjnkjnnkbkjjkbjkknjnknknk"
+            android:fontFamily="@font/yd_yoonche_b"
+            android:textColor="@color/black_50"
+            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="16dp"
+            android:minLines="4"
+            android:visibility="gone"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintTop_toTopOf="@id/note_tv_bg"
+            app:layout_constraintEnd_toEndOf="@id/note_tv_bg"
+            app:layout_constraintStart_toStartOf="@id/note_tv_bg"
+            app:layout_constraintBottom_toBottomOf="@id/note_tv_bg"
+            android:textSize="16sp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

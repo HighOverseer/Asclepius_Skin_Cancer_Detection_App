@@ -20,7 +20,7 @@ interface HealthApiService {
         const val DATE_FORMAT = "yyyy-MM-dd"
         private const val QUERY = "cancer"
         private const val SEARCH_IN = "title"
-        private const val PAGE_SIZE = 20
+        private const val PAGE_SIZE = 30
         private const val PAGE = 1
         private const val SORT_BY = "popularity"
         private const val EXCLUDE_DOMAINS = "sciencedaily.com"

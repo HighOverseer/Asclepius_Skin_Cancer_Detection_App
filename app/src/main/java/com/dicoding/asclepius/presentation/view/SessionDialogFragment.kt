@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
-import android.content.DialogInterface.OnDismissListener
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -20,13 +19,13 @@ class SessionDialogFragment : DialogFragment() {
 
     private var binding: DialogFragmentSessionBinding? = null
 
-    private var listener: OnDismissListener? = null
+    private var listener: OnDialogEventListener? = null
 
     private var latestSessionName: String? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        listener = requireActivity() as? OnDismissListener
+        listener = requireActivity() as? OnDialogEventListener
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,6 +87,11 @@ class SessionDialogFragment : DialogFragment() {
 
     }
 
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        listener?.onCancel()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
@@ -98,8 +102,9 @@ class SessionDialogFragment : DialogFragment() {
         super.onDetach()
     }
 
-    interface OnDismissListener {
+    interface OnDialogEventListener {
         fun onDismiss(sessionName: String)
+        fun onCancel()
     }
 
 }

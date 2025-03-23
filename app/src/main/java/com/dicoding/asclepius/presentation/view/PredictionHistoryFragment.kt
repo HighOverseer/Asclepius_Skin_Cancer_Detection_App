@@ -96,12 +96,12 @@ class PredictionHistoryFragment : Fragment() {
                 listOf(
                     ObjectAnimator.ofFloat(
                         view,
-                        "translationY",
+                        TRANSLATION_Y_ANIMATION_PROPERTY,
                         startTranslationValue,
                         endTranslationValue
-                    ).setDuration(500L),
-                    ObjectAnimator.ofFloat(view, "alpha", startAlphaValue, endAlphaValue)
-                        .setDuration(500L)
+                    ).setDuration(SEARCH_BAR_ANIMATION_DURATION),
+                    ObjectAnimator.ofFloat(view, ALPHA_ANIMATION_PROPERTY, startAlphaValue, endAlphaValue)
+                        .setDuration(SEARCH_BAR_ANIMATION_DURATION)
                 )
             }
 
@@ -134,13 +134,15 @@ class PredictionHistoryFragment : Fragment() {
     }
 
     private fun onItemClick(predictionHistory: PredictionHistory) {
-        val intent = Intent(requireContext(), ResultActivity::class.java)
-        intent.putExtra(ResultActivity.EXTRA_URI, predictionHistory.imageUri)
-        intent.putExtra(ResultActivity.EXTRA_OUTPUT, predictionHistory.modelOutput)
-        intent.putExtra(ResultActivity.EXTRA_SAVEABLE, false)
-        intent.putExtra(ResultActivity.EXTRA_SESSION_NAME, predictionHistory.sessionName)
-        intent.putExtra(ResultActivity.EXTRA_DATE, predictionHistory.date)
-        startActivity(intent)
+        Intent(requireContext(), ResultActivity::class.java).apply {
+            putExtra(ResultActivity.EXTRA_URI, predictionHistory.imageUri)
+            putExtra(ResultActivity.EXTRA_OUTPUT, predictionHistory.modelOutput)
+            putExtra(ResultActivity.EXTRA_SAVEABLE, false)
+            putExtra(ResultActivity.EXTRA_SESSION_NAME, predictionHistory.sessionName)
+            putExtra(ResultActivity.EXTRA_DATE, predictionHistory.date)
+            putExtra(ResultActivity.EXTRA_NOTE, predictionHistory.note)
+            startActivity(this)
+        }
     }
 
     override fun onDestroyView() {
@@ -148,5 +150,11 @@ class PredictionHistoryFragment : Fragment() {
         adapter.removeLoadStateListener(adapterLoadStateListener)
         super.onDestroyView()
         binding = null
+    }
+
+    companion object{
+        private const val TRANSLATION_Y_ANIMATION_PROPERTY = "translationY"
+        private const val ALPHA_ANIMATION_PROPERTY = "alpha"
+        private const val SEARCH_BAR_ANIMATION_DURATION = 500L
     }
 }
