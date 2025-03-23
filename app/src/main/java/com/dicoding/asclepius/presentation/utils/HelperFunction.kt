@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.TypedValue
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
@@ -57,18 +58,6 @@ fun ImageView.loadImage(imageUri: Uri) {
     Glide.with(context)
         .load(imageUri)
         .into(this)
-}
-
-fun ImageView.loadImage(@DrawableRes resourceId: Int, isTransformImage: Boolean = true) {
-    Glide.with(context)
-        .load(resourceId)
-        .let {
-            if (!isTransformImage) {
-                it.dontTransform()
-            } else it
-        }
-        .into(this)
-
 }
 
 fun ImageView.loadImage(imageUrl: String) {
@@ -209,4 +198,10 @@ fun deleteFromFileProvider(context: Context, uri: Uri) {
     val file =
         File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), uri.lastPathSegment ?: "")
     if (file.exists()) file.delete()
+}
+
+fun Context.getColorFromAttr(attr:Int):Int{
+    val typedValue = TypedValue()
+    theme.resolveAttribute(attr, typedValue, true)
+    return typedValue.data
 }

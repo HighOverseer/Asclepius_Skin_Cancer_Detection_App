@@ -5,6 +5,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +30,7 @@ import com.dicoding.asclepius.presentation.utils.ImageCaptureHandler
 import com.dicoding.asclepius.presentation.utils.cancelRequest
 import com.dicoding.asclepius.presentation.utils.convertImageUriToReducedBitmap
 import com.dicoding.asclepius.presentation.utils.deleteFromFileProvider
+import com.dicoding.asclepius.presentation.utils.getColorFromAttr
 import com.dicoding.asclepius.presentation.utils.getFile
 import com.dicoding.asclepius.presentation.utils.getFileName
 import com.dicoding.asclepius.presentation.utils.loadImage
@@ -97,6 +102,7 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initTvDescription()
         binding?.apply {
             galleryButton.setOnClickListener {
                 startGallery()
@@ -107,6 +113,53 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
             analyzeButton.setOnClickListener {
                 analyzeImage()
             }
+        }
+    }
+
+    private fun initTvDescription() {
+        binding?.apply {
+            val descriptionParts = requireContext()
+                .applicationContext
+                .resources
+                .getStringArray(R.array.analyze_descriptions)
+
+
+            val colorPrimary = requireContext()
+                .getColorFromAttr(android.R.attr.colorPrimary)
+            val black50 = ContextCompat.getColor(requireContext(), R.color.black_50)
+            val darkerGray = ContextCompat.getColor(requireContext(), R.color.grey_200)
+
+            val descriptionMaps = hashMapOf(
+                1 to colorPrimary, 3 to colorPrimary, 5 to black50
+            )
+
+            val description = SpannableStringBuilder().apply {
+                for(i in descriptionParts.indices){
+                    val start = length
+                    append(descriptionParts[i])
+
+                    val colorForThisPart = descriptionMaps[i]
+
+                    setSpan(
+                        ForegroundColorSpan(colorForThisPart ?: darkerGray),
+                        start,
+                        length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+
+                    if(colorForThisPart != null) {
+                        setSpan(
+                            StyleSpan(android.graphics.Typeface.BOLD),
+                            start,
+                            length,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                    }
+                    append(" ")
+                }
+            }
+            tvDescription.text = description
+
         }
     }
 
@@ -137,6 +190,7 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
 
                 val resultImageUri = UCrop.getOutput(data) ?: return
                 currentImageUri = resultImageUri
+                showToast(getString(R.string.taking_image_successfully))
                 showImage()
             }
 
@@ -322,7 +376,7 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
 
     fun clearSession() {
         currentImageUri = null
-        binding?.previewImageView?.loadImage(R.drawable.ic_place_holder, isTransformImage = false)
+        binding?.previewImageView?.setImageDrawable(null)
     }
 
 

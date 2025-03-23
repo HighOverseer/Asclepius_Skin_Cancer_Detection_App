@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white_100"
     tools:context=".presentation.view.InformationFragment">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -12,7 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:padding="16dp"
+        android:paddingVertical="16dp"
+        android:background="@color/white_100"
+        android:paddingHorizontal="8dp"
+        android:layout_marginHorizontal="8dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         tools:listitem="@layout/item_cancer_news" />
 
@@ -22,8 +24,6 @@
         android:visibility="visible"
         android:indeterminate="true"
         app:trackThickness="6dp"
-        app:showDelay="500"
-        app:minHideDelay="500"
         android:id="@+id/linearProgressIndicator"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/guideline7"

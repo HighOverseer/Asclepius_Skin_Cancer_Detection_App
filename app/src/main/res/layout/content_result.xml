@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/activity_result2"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tv_info_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Date"
+            android:fontFamily="@font/yd_yoonche_b"
+            android:textColor="@color/grey_200"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="12 Apr 2024"
+            android:fontFamily="@font/yd_yoonche_b"
+            android:textColor="@color/black_50"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_info_date"
+            android:textSize="16sp"/>
+        <TextView
+            android:id="@+id/tv_info_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Result"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/yd_yoonche_b"
+            android:textColor="@color/grey_200"
+            app:layout_constraintTop_toBottomOf="@id/tv_date"
+            android:textSize="14sp"/>
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progress_circular"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:trackColor="@color/black"
+            android:progress="60"
+            app:layout_constraintTop_toBottomOf="@id/tv_info_result"
+            app:layout_constraintStart_toStartOf="@id/result_text"
+            app:layout_constraintEnd_toEndOf="@id/result_text"
+            app:layout_constraintDimensionRatio="1:1"
+            android:layout_marginStart="-48dp"
+            android:layout_marginEnd="-48dp"/>
+
+        <TextView
+            android:id="@+id/result_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="76%"
+            android:fontFamily="@font/yd_yoonche_b"
+            android:textAlignment="center"
+            android:textColor="@color/black_50"
+            app:layout_constraintTop_toTopOf="@id/progress_circular"
+            app:layout_constraintBottom_toBottomOf="@id/progress_circular"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:id="@+id/tv_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Cancer"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/yd_yoonche_b"
+            android:textColor="@color/black_50"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/progress_circular"
+            android:textSize="24sp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

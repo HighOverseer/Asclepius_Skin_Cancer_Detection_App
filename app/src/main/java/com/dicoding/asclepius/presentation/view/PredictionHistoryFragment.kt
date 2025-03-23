@@ -9,8 +9,11 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.paging.CombinedLoadStates
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
@@ -46,6 +49,7 @@ class PredictionHistoryFragment : Fragment() {
         initView()
 
 
+
         binding?.apply {
             viewLifecycleOwner.collectLatestOnLifeCycleStarted(viewModel.predictionHistories) { pagingData ->
                 adapter.submitData(
@@ -53,6 +57,8 @@ class PredictionHistoryFragment : Fragment() {
                     pagingData
                 )
             }
+
+            adapter.addLoadStateListener(adapterLoadStateListener)
 
             rvHistories.addOnScrollListener(object : OnScrollListener() {
 
@@ -64,6 +70,12 @@ class PredictionHistoryFragment : Fragment() {
                 }
             })
         }
+    }
+
+    private val adapterLoadStateListener = { state:CombinedLoadStates ->
+        val isEmptyTextViewVisible = state.refresh is LoadState.NotLoading && adapter.itemCount == 0
+        binding?.tvEmpty?.isVisible = isEmptyTextViewVisible
+
     }
 
     fun animateSlide(isSlideIn: Boolean) {
@@ -133,6 +145,7 @@ class PredictionHistoryFragment : Fragment() {
 
     override fun onDestroyView() {
         binding?.searchBar?.removeTextChangedListener(textWatcher)
+        adapter.removeLoadStateListener(adapterLoadStateListener)
         super.onDestroyView()
         binding = null
     }

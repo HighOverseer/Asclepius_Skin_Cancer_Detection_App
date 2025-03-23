@@ -1,22 +1,38 @@
-<resources xmlns:tools="http://schemas.android.com/tools" >
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.Asclepius" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
 
         <item name="android:windowBackground">@color/purple_80</item>
+        <item name="windowSplashScreenBackground">?attr/colorPrimary</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 
     <style name="Theme.Asclepius" parent="Base.Theme.Asclepius" />
 
-    <style name="TabTextStyle" >
+    <style name="TabTextStyle">
         <item name="android:fontFamily">@font/yd_yoonche_m</item>
         <item name="android:textSize">16sp</item>
     </style>
-    
+
     <style name="RoundedImageView">
         <item name="cornerSize">6dp</item>
     </style>
 
+    <style name="AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <style name="ExpandedTitleTextStyle">
+        <item name="fontFamily">@font/yd_yoonche_b</item>
+        <item name="android:textSize">26sp</item>
+        <item name="fontWeight">700</item>
+    </style>
+
+    <style name="CollapsedTitleTextStyle">
+        <item name="android:fontFamily">@font/yd_yoonche_m</item>
+        <item name="fontWeight">400</item>
+    </style>
 
 </resources>

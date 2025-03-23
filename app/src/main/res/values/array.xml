@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="analyze_descriptions">
+        <item>Press the button on the</item>
+        <item>Top Left</item>
+        <item> to select a photo from the gallery, and the one on the </item>
+        <item>Top Right</item>
+        <item>to take a photo with the camera. Once done, press the </item>
+        <item>Analyze</item>
+        <item>Button below to start the analysis process.</item>
+    </string-array>
+</resources>

@@ -59,6 +59,8 @@ class InformationFragment : Fragment() {
 
         viewLifecycleOwner.collectLatestOnLifeCycleStarted(viewModel.isLoading){ isLoading ->
             binding?.apply {
+                if(isLoading == linearProgressIndicator.isVisible) return@apply
+
                 if(isLoading) linearProgressIndicator.show() else  linearProgressIndicator.hide()
             }
         }

@@ -8,8 +8,8 @@
     <View
         android:id="@+id/line"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/black_50"
+        android:layout_height="4dp"
+        android:background="?attr/colorPrimary"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -23,6 +23,7 @@
         android:layout_marginTop="2dp"
         android:letterSpacing="-0.04"
         android:textSize="18sp"
+        android:textColor="?attr/colorPrimary"
         android:fontFamily="@font/yd_yoonche_b"
         app:layout_constraintEnd_toEndOf="@id/line"
         android:paddingBottom="24dp"
