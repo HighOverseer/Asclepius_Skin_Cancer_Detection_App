@@ -62,7 +62,7 @@
             android:fontFamily="@font/yd_yoonche_b"
             android:textAlignment="textEnd"
             android:textColor="@android:color/darker_gray"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toBottomOf="@id/imageView"
             app:layout_constraintEnd_toEndOf="@id/tv_session_name"

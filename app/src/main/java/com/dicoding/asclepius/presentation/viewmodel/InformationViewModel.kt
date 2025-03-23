@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -31,11 +32,15 @@ class InformationViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
     private val _uiEvent = Channel<InformationUIEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
     private fun loadCancerNews() {
         viewModelScope.launch {
+            _isLoading.value = true
             when (val resource = repository.getNewsAboutCancer()) {
                 is Resource.Success -> {
                     _cancerNews.value = resource.data
@@ -58,6 +63,8 @@ class InformationViewModel @Inject constructor(
                     )
                 }
             }
+        }.invokeOnCompletion {
+            _isLoading.value = false
         }
     }
 

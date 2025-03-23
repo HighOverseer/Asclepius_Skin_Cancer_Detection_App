@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
@@ -53,6 +54,12 @@ class InformationFragment : Fragment() {
                 is InformationUIEvent.FailedLoadingInitialData -> {
                     showToast(event.message.getValue(requireContext()))
                 }
+            }
+        }
+
+        viewLifecycleOwner.collectLatestOnLifeCycleStarted(viewModel.isLoading){ isLoading ->
+            binding?.apply {
+                if(isLoading) linearProgressIndicator.show() else  linearProgressIndicator.hide()
             }
         }
 

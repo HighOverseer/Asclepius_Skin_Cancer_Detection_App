@@ -13,6 +13,10 @@
         <item name="android:fontFamily">@font/yd_yoonche_m</item>
         <item name="android:textSize">16sp</item>
     </style>
+    
+    <style name="RoundedImageView">
+        <item name="cornerSize">6dp</item>
+    </style>
 
 
 </resources>

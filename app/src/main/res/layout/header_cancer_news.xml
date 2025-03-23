@@ -22,6 +22,7 @@
         app:layout_constraintStart_toStartOf="@id/line"
         android:layout_marginTop="2dp"
         android:letterSpacing="-0.04"
+        android:textSize="18sp"
         android:fontFamily="@font/yd_yoonche_b"
         app:layout_constraintEnd_toEndOf="@id/line"
         android:paddingBottom="24dp"

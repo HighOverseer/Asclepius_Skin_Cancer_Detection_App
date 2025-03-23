@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="16dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        app:strokeWidth="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/dashed_stroke_purple_bg">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/imagePreview"
+                android:layout_width="match_parent"
+                tools:src="@tools:sample/avatars"
+                android:scaleType="centerCrop"
+                android:alpha="0.3"
+                android:cropToPadding="true"
+                app:shapeAppearanceOverlay="@style/RoundedImageView"
+                android:layout_margin="16dp"
+                android:layout_height="match_parent"/>
+
+            <ImageButton
+                android:id="@+id/galleryButton"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/circle_purple_bg"
+                android:padding="19dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_gallery"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.45"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintEnd_toStartOf="@id/guideline10"
+                app:layout_constraintWidth_percent="0.175" />
+
+            <ImageButton
+                android:id="@+id/cameraButton"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/circle_purple_bg"
+                android:padding="18dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_camera"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/guideline10"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.45"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintWidth_percent="0.175" />
+
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/yd_yoonche_b"
+                android:letterSpacing="-0.01"
+                android:text="@string/ambil_foto_untuk_dianalisis"
+                android:textAlignment="center"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="14sp"
+                app:layout_constraintTop_toBottomOf="@id/cameraButton" />
+
+            <TextView
+                android:id="@+id/tv_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/yd_yoonche_m"
+                tools:text="Tekan Tombol di kiri Atas untuk mengambil foto dari galeri dan yang kanan untuk mengambil dari kamera Jika sudah tekan tombol predict dibawah untuk memulai proses analisis"
+                android:textAlignment="center"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="12sp"
+                app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="4dp"
+                android:text="@string/predict"
+                android:textColor="@color/black_50"
+                app:layout_constraintWidth_percent="0.35"
+                app:icon="@drawable/ic_scan"
+                app:iconTint="@color/black_50"
+                app:iconPadding="0dp"
+                app:layout_constraintVertical_bias="0.9"
+                app:layout_constraintDimensionRatio="3:1.15"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

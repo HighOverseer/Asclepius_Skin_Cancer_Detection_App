@@ -28,7 +28,6 @@ class PredictionHistoryFragment : Fragment() {
     private val viewModel: PredictionHistoryViewModel by viewModels()
     private val adapter = PredictionHistoriesAdapter(::onItemClick)
 
-    private var settingSearchBarVisibilityJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
