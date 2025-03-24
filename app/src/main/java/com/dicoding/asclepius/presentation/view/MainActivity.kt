@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var sectionsPagerAdapter: SectionsPagerAdapter
 
-    private var initialPageIndex:Int = SectionsPagerAdapter.PageIndex.PREDICTION.pageIndex
+    private var initialPageIndex: Int = SectionsPagerAdapter.PageIndex.PREDICTION.pageIndex
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    companion object{
+    companion object {
         private const val KEY_PAGE_POSITION = "page_position"
     }
 
