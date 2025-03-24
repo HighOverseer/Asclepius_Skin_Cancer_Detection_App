@@ -110,7 +110,7 @@
                 android:id="@+id/analyzeButton"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_margin="4dp"
+                android:layout_margin="@dimen/fab_margin"
                 android:text="@string/analyze"
                 android:textColor="@color/black_50"
                 app:layout_constraintWidth_percent="0.35"

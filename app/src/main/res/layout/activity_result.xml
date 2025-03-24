@@ -58,7 +58,7 @@
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
         app:icon="@android:drawable/ic_menu_save"
-        android:layout_marginBottom="42dp"
+        android:layout_margin="@dimen/fab_margin"
         app:iconPadding="0dp"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
