@@ -21,6 +21,7 @@ class Splash : AppCompatActivity() {
             delay(SPLASH_DELAY)
             val intent = Intent(this@Splash, MainActivity::class.java)
             startActivity(intent)
+            finish()
         }
     }
 

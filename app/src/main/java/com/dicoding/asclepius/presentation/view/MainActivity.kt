@@ -20,6 +20,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var sectionsPagerAdapter: SectionsPagerAdapter
 
+    private var initialPageIndex:Int = SectionsPagerAdapter.PageIndex.PREDICTION.pageIndex
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -30,6 +32,10 @@ class MainActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        savedInstanceState?.apply {
+            initialPageIndex = getInt(KEY_PAGE_POSITION)
         }
 
         sectionsPagerAdapter = SectionsPagerAdapter(this)
@@ -44,12 +50,17 @@ class MainActivity : AppCompatActivity() {
             }.attach()
 
             viewPager.setCurrentItem(
-                SectionsPagerAdapter.PageIndex.PREDICTION.pageIndex,
+                initialPageIndex,
                 false
             )
         }
 
         supportActionBar?.elevation = 0f
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(KEY_PAGE_POSITION, binding.tabs.selectedTabPosition)
     }
 
     val resultActivityLauncher = registerForActivityResult(
@@ -96,6 +107,10 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         binding.tabs.removeOnTabSelectedListener(onTabSelectedListener)
         super.onDestroy()
+    }
+
+    companion object{
+        private const val KEY_PAGE_POSITION = "page_position"
     }
 
 }
