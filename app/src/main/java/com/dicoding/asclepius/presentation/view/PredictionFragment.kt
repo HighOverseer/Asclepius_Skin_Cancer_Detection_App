@@ -161,6 +161,7 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
         }
     }
 
+    @Suppress("DEPRECATION")
     @Deprecated(
         "Deprecated in Java", ReplaceWith(
             "super.onActivityResult(requestCode, resultCode, data)",

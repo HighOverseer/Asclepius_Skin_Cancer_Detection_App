@@ -37,6 +37,7 @@ import java.util.Date
 import java.util.Locale
 
 
+@Suppress("DEPRECATION")
 fun Context.convertImageUriToBitmap(imageUri: Uri): Bitmap {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
         val source = ImageDecoder.createSource(contentResolver, imageUri)

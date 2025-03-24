@@ -9,7 +9,6 @@ import androidx.core.view.WindowInsetsCompat
 import com.dicoding.asclepius.databinding.ActivityMainBinding
 import com.dicoding.asclepius.presentation.adapter.SectionsPagerAdapter
 import com.dicoding.asclepius.presentation.view.PredictionFragment.Companion.FLAG_IS_SESSION_SAVED
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayout.Tab
 import com.google.android.material.tabs.TabLayoutMediator
