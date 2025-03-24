@@ -60,6 +60,7 @@ class ResultViewModel @Inject constructor(
                     )
                 }
             }
+
             ResultUIEvent.SessionDialogCanceled -> {
                 _uiState.update {
                     it.copy(
@@ -76,7 +77,7 @@ class ResultViewModel @Inject constructor(
         }
     }
 
-    fun insertPredictionHistory(sessionName: String, note:String) {
+    fun insertPredictionHistory(sessionName: String, note: String) {
         val output = latestModelOutput
         val imageUri = latestImageUri
 

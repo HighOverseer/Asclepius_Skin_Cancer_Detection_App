@@ -14,7 +14,7 @@ class ImageCaptureHandler {
 
         val fileName = getFileName()
 
-        uri = getUriForBelowAndroidQ(context, fileName)
+        uri = getContentUriWithFileProvider(context, fileName)
 
         latestImageCapturedUri = uri
         return uri

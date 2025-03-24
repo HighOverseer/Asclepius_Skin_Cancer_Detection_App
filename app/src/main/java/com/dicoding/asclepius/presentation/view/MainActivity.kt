@@ -66,11 +66,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val onTabSelectedListener = object : OnTabSelectedListener {
-        override fun onTabSelected(tab: TabLayout.Tab?) {
+        override fun onTabSelected(tab: Tab?) {
             setSearchBarAnimationInPredictionHistoryFragment(true, tab)
         }
 
-        override fun onTabUnselected(tab: TabLayout.Tab?) {
+        override fun onTabUnselected(tab: Tab?) {
             setSearchBarAnimationInPredictionHistoryFragment(false, tab)
         }
 

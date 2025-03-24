@@ -13,6 +13,4 @@ abstract class StorageModule {
 
     @Binds
     abstract fun bindRepository(repositoryImpl: RepositoryImpl): Repository
-
-
 }

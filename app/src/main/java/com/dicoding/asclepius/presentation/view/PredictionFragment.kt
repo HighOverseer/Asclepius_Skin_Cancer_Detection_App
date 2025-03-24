@@ -48,7 +48,6 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
 
     private var currentImageUri: Uri? = null
 
-    //when user click cancel button on ucrop activity, see OnActivityResult
     private var latestCroppedImageFilePath: String? = null
 
     private val imageCaptureHandler = ImageCaptureHandler()
@@ -133,7 +132,7 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
             )
 
             val description = SpannableStringBuilder().apply {
-                for(i in descriptionParts.indices){
+                for (i in descriptionParts.indices) {
                     val start = length
                     append(descriptionParts[i])
 
@@ -146,7 +145,7 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
 
-                    if(colorForThisPart != null) {
+                    if (colorForThisPart != null) {
                         setSpan(
                             StyleSpan(android.graphics.Typeface.BOLD),
                             start,

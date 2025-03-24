@@ -1,6 +1,5 @@
 package com.dicoding.asclepius.presentation.utils
 
-import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -12,7 +11,6 @@ import android.provider.MediaStore
 import android.util.TypedValue
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
@@ -161,20 +159,7 @@ fun getFileName(): String {
     return "${timeStamp.format(Date())}_${System.currentTimeMillis()}.jpg"
 }
 
-fun getUriForAndroidQAbove(context: Context, fileName: String): Uri? {
-    val contentValues = ContentValues().apply {
-        put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-        put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
-        put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/MyCamera/")
-    }
-
-    return context.contentResolver.insert(
-        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-        contentValues
-    )
-}
-
-fun getUriForBelowAndroidQ(context: Context, fileName: String): Uri {
+fun getContentUriWithFileProvider(context: Context, fileName: String): Uri {
     val imageFile = getFile(context, fileName)
 
     return FileProvider.getUriForFile(
@@ -200,7 +185,7 @@ fun deleteFromFileProvider(context: Context, uri: Uri) {
     if (file.exists()) file.delete()
 }
 
-fun Context.getColorFromAttr(attr:Int):Int{
+fun Context.getColorFromAttr(attr: Int): Int {
     val typedValue = TypedValue()
     theme.resolveAttribute(attr, typedValue, true)
     return typedValue.data

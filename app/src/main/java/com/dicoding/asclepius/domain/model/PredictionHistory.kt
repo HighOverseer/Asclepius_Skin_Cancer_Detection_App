@@ -6,5 +6,5 @@ data class PredictionHistory(
     val imageUri: String,
     val modelOutput: ModelOutput,
     val date: String,
-    val note:String
+    val note: String
 )

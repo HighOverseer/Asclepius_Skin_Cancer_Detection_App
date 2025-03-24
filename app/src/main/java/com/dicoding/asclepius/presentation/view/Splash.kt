@@ -2,11 +2,7 @@ package com.dicoding.asclepius.presentation.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.dicoding.asclepius.R
 import kotlinx.coroutines.Job
@@ -17,19 +13,18 @@ class Splash : AppCompatActivity() {
     private var splashJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        //installSplashScreen()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
         splashJob?.cancel()
-        splashJob = lifecycleScope.launch{
+        splashJob = lifecycleScope.launch {
             delay(SPLASH_DELAY)
             val intent = Intent(this@Splash, MainActivity::class.java)
             startActivity(intent)
         }
     }
 
-    companion object{
+    companion object {
         private const val SPLASH_DELAY = 1500L
     }
 }

@@ -23,14 +23,12 @@ import com.dicoding.asclepius.presentation.adapter.PredictionHistoriesAdapter
 import com.dicoding.asclepius.presentation.utils.collectLatestOnLifeCycleStarted
 import com.dicoding.asclepius.presentation.viewmodel.PredictionHistoryViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Job
 
 @AndroidEntryPoint
 class PredictionHistoryFragment : Fragment() {
     private var binding: FragmentPredictionHistoryBinding? = null
     private val viewModel: PredictionHistoryViewModel by viewModels()
     private val adapter = PredictionHistoriesAdapter(::onItemClick)
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,8 +45,6 @@ class PredictionHistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-
-
 
         binding?.apply {
             viewLifecycleOwner.collectLatestOnLifeCycleStarted(viewModel.predictionHistories) { pagingData ->
@@ -72,7 +68,7 @@ class PredictionHistoryFragment : Fragment() {
         }
     }
 
-    private val adapterLoadStateListener = { state:CombinedLoadStates ->
+    private val adapterLoadStateListener = { state: CombinedLoadStates ->
         val isEmptyTextViewVisible = state.refresh is LoadState.NotLoading && adapter.itemCount == 0
         binding?.tvEmpty?.isVisible = isEmptyTextViewVisible
 
@@ -100,7 +96,12 @@ class PredictionHistoryFragment : Fragment() {
                         startTranslationValue,
                         endTranslationValue
                     ).setDuration(SEARCH_BAR_ANIMATION_DURATION),
-                    ObjectAnimator.ofFloat(view, ALPHA_ANIMATION_PROPERTY, startAlphaValue, endAlphaValue)
+                    ObjectAnimator.ofFloat(
+                        view,
+                        ALPHA_ANIMATION_PROPERTY,
+                        startAlphaValue,
+                        endAlphaValue
+                    )
                         .setDuration(SEARCH_BAR_ANIMATION_DURATION)
                 )
             }
@@ -152,7 +153,7 @@ class PredictionHistoryFragment : Fragment() {
         binding = null
     }
 
-    companion object{
+    companion object {
         private const val TRANSLATION_Y_ANIMATION_PROPERTY = "translationY"
         private const val ALPHA_ANIMATION_PROPERTY = "alpha"
         private const val SEARCH_BAR_ANIMATION_DURATION = 500L

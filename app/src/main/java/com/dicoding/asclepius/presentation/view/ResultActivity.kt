@@ -39,7 +39,7 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDialogEventL
 
     private var didUserSavedTheSession: Boolean = false
 
-    private var progressIndicatorAnimation:WeakReference<ObjectAnimator>? = null
+    private var progressIndicatorAnimation: WeakReference<ObjectAnimator>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -93,7 +93,7 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDialogEventL
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(item.itemId == android.R.id.home){
+        if (item.itemId == android.R.id.home) {
             finish()
             return true
         }
@@ -127,14 +127,13 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDialogEventL
 
                     val progress = (output.confidenceScore * 100).toInt()
 
-                    ObjectAnimator.ofInt(progressCircular, PROGRESS_INDICATOR_PROPERTY, 0, progress).apply {
-                        progressIndicatorAnimation = WeakReference(this)
-                        duration = PROGRESS_INDICATOR_ANIMATION_DURATION
-                        start()
-                    }
-
+                    ObjectAnimator.ofInt(progressCircular, PROGRESS_INDICATOR_PROPERTY, 0, progress)
+                        .apply {
+                            progressIndicatorAnimation = WeakReference(this)
+                            duration = PROGRESS_INDICATOR_ANIMATION_DURATION
+                            start()
+                        }
                 }
-
 
                 if (isSaveAble) {
                     tvInfoDate.isVisible = false
