@@ -279,11 +279,13 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
             return
         }
 
+        binding?.progressIndicator?.show()
         imageClassifierHelper.classifyStaticImage(imageUri)
     }
 
     override fun onResult(results: List<Classifications>?, inferenceTime: Long) {
         requireActivity().runOnUiThread {
+            binding?.progressIndicator?.hide()
             results?.let {
                 if (it.isNotEmpty() && it[0].categories.isNotEmpty()) {
                     val sortedCategories = it[0].categories.sortedByDescending { category ->
@@ -298,8 +300,10 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
                     currentImageUri?.let { imageUri ->
                         moveToResult(imageUri, output)
                     }
+                } else {
+                    showToast(getString(R.string.result_empty_please_try_again))
                 }
-            }
+            } ?: showToast(getString(R.string.result_empty_please_try_again))
         }
     }
 

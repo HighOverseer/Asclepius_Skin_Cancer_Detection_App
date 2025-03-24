@@ -36,5 +36,6 @@
     <string name="news_item">News Item</string>
     <string name="news_item_image">News Item Image</string>
     <string name="history_image">History Image</string>
+    <string name="result_empty_please_try_again">Result empty, please try again</string>
 
 </resources>

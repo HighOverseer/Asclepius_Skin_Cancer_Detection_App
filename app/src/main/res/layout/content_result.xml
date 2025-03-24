@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/activity_result"
-    android:layout_height="match_parent">
+    tools:showIn="@layout/activity_result">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -16,148 +16,149 @@
             android:id="@+id/tv_info_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/date"
             android:fontFamily="@font/yd_yoonche_b"
+            android:text="@string/date"
             android:textColor="@color/grey_200"
-            app:layout_constraintTop_toTopOf="parent"
-            android:textSize="14sp"/>
+            android:textSize="14sp"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="12 Apr 2024"
+            android:layout_marginTop="8dp"
             android:fontFamily="@font/yd_yoonche_b"
             android:textColor="@color/black_50"
-            android:layout_marginTop="8dp"
+            android:textSize="16sp"
             app:layout_constraintTop_toBottomOf="@id/tv_info_date"
-            android:textSize="16sp"/>
+            tools:text="12 Apr 2024" />
+
         <TextView
             android:id="@+id/tv_info_result"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/result"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/yd_yoonche_b"
+            android:text="@string/result"
             android:textColor="@color/grey_200"
-            app:layout_constraintTop_toBottomOf="@id/tv_date"
-            android:textSize="14sp"/>
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/tv_date" />
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progress_circular"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:trackColor="@color/black"
-            android:progress="0"
-            android:max="100"
-            app:layout_constraintTop_toBottomOf="@id/tv_info_result"
-            app:layout_constraintStart_toStartOf="@id/result_text"
-            app:layout_constraintEnd_toEndOf="@id/result_text"
-            app:layout_constraintDimensionRatio="1:1"
             android:layout_marginStart="-48dp"
-            android:layout_marginEnd="-48dp"/>
+            android:layout_marginEnd="-48dp"
+            android:max="100"
+            android:progress="0"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="@id/result_text"
+            app:layout_constraintStart_toStartOf="@id/result_text"
+            app:layout_constraintTop_toBottomOf="@id/tv_info_result"
+            app:trackColor="@color/black" />
 
         <TextView
             android:id="@+id/result_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="76%"
             android:fontFamily="@font/yd_yoonche_b"
             android:textAlignment="center"
             android:textColor="@color/black_50"
-            app:layout_constraintTop_toTopOf="@id/progress_circular"
+            android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="@id/progress_circular"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:textSize="24sp"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/progress_circular"
+            tools:text="76%" />
 
         <TextView
             android:id="@+id/tv_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="Cancer"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/yd_yoonche_b"
             android:textColor="@color/black_50"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/progress_circular"
-            android:textSize="24sp"/>
+            tools:text="Cancer" />
 
         <TextView
             android:id="@+id/tv_info_note"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/note"
-            android:fontFamily="@font/yd_yoonche_b"
-            android:textColor="@color/grey_200"
             android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/tv_label"
-            android:textSize="14sp"/>
+            android:fontFamily="@font/yd_yoonche_b"
+            android:text="@string/note"
+            android:textColor="@color/grey_200"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/tv_label" />
 
         <View
             android:id="@+id/note_et_bg"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/tv_info_note"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="@id/tv_info_note"
             android:background="@drawable/rounded_white100_bg"
-            app:layout_constraintEnd_toEndOf="@id/tv_info_note"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/tv_info_note"
+            app:layout_constraintStart_toStartOf="@id/tv_info_note"
+            app:layout_constraintTop_toBottomOf="@id/tv_info_note" />
 
         <EditText
             android:id="@+id/et_note"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:background="@null"
-            android:fontFamily="@font/yd_yoonche_b"
-            android:textColor="@color/black_50"
-            android:hint="@string/write_yout_note_here"
             android:layout_marginHorizontal="16dp"
-            android:textSize="16sp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            android:lines="4"
-            android:gravity="top"
             android:autofillHints="phone"
+            android:background="@null"
+            android:fontFamily="@font/yd_yoonche_b"
+            android:gravity="top"
+            android:hint="@string/write_yout_note_here"
+            android:inputType="textMultiLine"
+            android:lines="4"
             android:maxLines="6"
-            app:layout_constraintTop_toTopOf="@id/note_et_bg"
+            android:textColor="@color/black_50"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/note_et_bg"
             app:layout_constraintEnd_toEndOf="@id/note_et_bg"
             app:layout_constraintStart_toStartOf="@id/note_et_bg"
-            app:layout_constraintBottom_toBottomOf="@id/note_et_bg"
+            app:layout_constraintTop_toTopOf="@id/note_et_bg"
             tools:ignore="LabelFor" />
 
         <View
             android:id="@+id/note_tv_bg"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/tv_info_note"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginTop="8dp"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="@id/tv_info_note"
             android:background="@drawable/rounded_white100_bg"
-            app:layout_constraintEnd_toEndOf="@id/tv_info_note"/>
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/tv_info_note"
+            app:layout_constraintStart_toStartOf="@id/tv_info_note"
+            app:layout_constraintTop_toBottomOf="@id/tv_info_note" />
 
         <TextView
             android:id="@+id/tv_note"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="njknknjnjnkjnnkbkjjkbjkknjnknknk"
-            android:fontFamily="@font/yd_yoonche_b"
-            android:textColor="@color/black_50"
-            android:layout_marginTop="16dp"
             android:layout_marginHorizontal="16dp"
-            android:minLines="4"
-            android:visibility="gone"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            app:layout_constraintTop_toTopOf="@id/note_tv_bg"
+            android:fontFamily="@font/yd_yoonche_b"
+            android:minLines="4"
+            android:textColor="@color/black_50"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/note_tv_bg"
             app:layout_constraintEnd_toEndOf="@id/note_tv_bg"
             app:layout_constraintStart_toStartOf="@id/note_tv_bg"
-            app:layout_constraintBottom_toBottomOf="@id/note_tv_bg"
-            android:textSize="16sp"/>
+            app:layout_constraintTop_toTopOf="@id/note_tv_bg"
+            tools:text="njknknjnjnkjnnkbkjjkbjkknjnknknk" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

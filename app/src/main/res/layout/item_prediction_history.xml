@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:cardCornerRadius="4dp"
-    app:cardBackgroundColor="@color/white_100"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginBottom="16dp"
+    app:cardBackgroundColor="@color/white_100"
+    app:cardCornerRadius="4dp"
     app:cardElevation="2dp"
     app:strokeWidth="0dp">
 
@@ -60,11 +60,11 @@
             android:id="@+id/tv_session_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:fontFamily="@font/yd_yoonche_l"
             android:textAlignment="textEnd"
             android:textColor="@android:color/darker_gray"
             android:textSize="12sp"
-            android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toBottomOf="@id/imageView"
             app:layout_constraintEnd_toEndOf="@id/tv_session_name"
             app:layout_constraintStart_toEndOf="@id/guideline6"
@@ -105,7 +105,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.65"/>
+            app:layout_constraintGuide_percent="0.65" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

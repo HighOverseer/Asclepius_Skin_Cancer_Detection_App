@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:background="?attr/colorPrimary"
     android:layout_height="match_parent"
+    android:background="?attr/colorPrimary"
     tools:context=".presentation.view.Splash">
 
     <ImageView
@@ -13,28 +13,28 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@string/logo"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/ic_logo"
         android:scaleType="fitCenter"
+        android:src="@drawable/ic_logo"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.45"
-        app:layout_constraintWidth_percent="0.35"/>
+        app:layout_constraintWidth_percent="0.35" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/iv_logo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"
-        android:text="@string/app_name"
         android:fontFamily="@font/yd_yoonche_b"
-        android:textSize="24sp"
         android:letterSpacing="0.1"
+        android:text="@string/app_name"
+        android:textAlignment="center"
         android:textColor="@color/white_100"
-        android:textAlignment="center"/>
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_logo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
