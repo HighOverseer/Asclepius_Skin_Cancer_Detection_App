@@ -2,20 +2,18 @@ package com.dicoding.asclepius.presentation.view
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.dicoding.asclepius.databinding.ActivityMainBinding
 import com.dicoding.asclepius.presentation.adapter.SectionsPagerAdapter
-import com.dicoding.asclepius.presentation.view.PredictionFragment.Companion.FLAG_IS_SESSION_SAVED
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayout.Tab
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), PredictionFragment.OnBackFromResultActivityCallback {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var sectionsPagerAdapter: SectionsPagerAdapter
@@ -63,14 +61,8 @@ class MainActivity : AppCompatActivity() {
         outState.putInt(KEY_PAGE_POSITION, binding.tabs.selectedTabPosition)
     }
 
-    val resultActivityLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        val fragment =
-            sectionsPagerAdapter.getFragment(SectionsPagerAdapter.PageIndex.PREDICTION.pageIndex)
-        (fragment as? PredictionFragment)?.clearSession()
-
-        if (result.resultCode == FLAG_IS_SESSION_SAVED) {
+    override fun onBackFromResult(isSessionSaved: Boolean) {
+        if (isSessionSaved) {
             binding.viewPager.setCurrentItem(SectionsPagerAdapter.PageIndex.HISTORY.pageIndex, true)
         }
     }

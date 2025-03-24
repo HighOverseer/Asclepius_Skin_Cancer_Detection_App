@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -47,6 +48,7 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
     private var binding: FragmentPredictionBinding? = null
 
     private var currentImageUri: Uri? = null
+    private var transientWillImageUriRetained = false
 
     private var latestCroppedImageFilePath: String? = null
 
@@ -87,14 +89,16 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
         override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
             when (event) {
                 Lifecycle.Event.ON_DESTROY -> {
-                    binding?.previewImageView?.cancelRequest()
-                    imageCaptureHandler.clearLatestCapturedImageUri(
-                        requireContext()
-                    )
-                    currentImageUri?.let {
-                        deleteFromFileProvider(requireContext().applicationContext, it)
+                    if (!transientWillImageUriRetained || requireActivity().isFinishing) {
+                        binding?.previewImageView?.cancelRequest()
+                        imageCaptureHandler.clearLatestCapturedImageUri(
+                            requireContext().applicationContext
+                        )
+                        currentImageUri?.let {
+                            deleteFromFileProvider(requireContext().applicationContext, it)
+                        }
+                        currentImageUri = null
                     }
-                    currentImageUri = null
                 }
 
                 else -> return
@@ -102,11 +106,10 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
         }
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initTvDescription()
+        initViews(savedInstanceState)
         binding?.apply {
             galleryButton.setOnClickListener {
                 startGallery()
@@ -117,6 +120,35 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
             analyzeButton.setOnClickListener {
                 analyzeImage()
             }
+        }
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        transientWillImageUriRetained = false
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        transientWillImageUriRetained = true
+        outState.putParcelable(KEY_CURRENT_IMAGE_URI, currentImageUri)
+    }
+
+    private fun initViews(savedInstanceState: Bundle?) {
+        initCurrentImageUri(savedInstanceState)
+        initTvDescription()
+    }
+
+    @Suppress("DEPRECATION")
+    private fun initCurrentImageUri(savedInstanceState: Bundle?) {
+        currentImageUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            savedInstanceState?.getParcelable(KEY_CURRENT_IMAGE_URI, Uri::class.java)
+        } else savedInstanceState?.getParcelable(KEY_CURRENT_IMAGE_URI)
+
+        transientWillImageUriRetained = false
+
+        currentImageUri?.let {
+            binding?.previewImageView?.loadImage(it)
         }
     }
 
@@ -249,6 +281,14 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
 
     }
 
+    private val resultActivityLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        clearSession()
+
+        val isSessionSaved = result.resultCode == FLAG_IS_SESSION_SAVED
+        (requireActivity() as? OnBackFromResultActivityCallback)?.onBackFromResult(isSessionSaved)
+    }
 
     private fun moveToCropActivity() {
         val croppedImageFile = getFile(requireContext(), getFileName())
@@ -356,6 +396,7 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
         }
     }
 
+
     private fun moveToResult(imageUri: Uri, output: ModelOutput) {
         val activity = requireActivity()
 
@@ -367,7 +408,7 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
             putExtra(ResultActivity.EXTRA_OUTPUT, output)
             putExtra(ResultActivity.EXTRA_SAVEABLE, true)
         }
-        activity.resultActivityLauncher.launch(intent)
+        resultActivityLauncher.launch(intent)
     }
 
     private fun askCameraPermission() {
@@ -384,13 +425,17 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
         requireActivity().lifecycle.removeObserver(activityObserver)
     }
 
-    fun clearSession() {
+    private fun clearSession() {
         currentImageUri = null
-        binding?.previewImageView?.setImageDrawable(null)
+        binding?.previewImageView?.loadImage(null)
     }
 
+    interface OnBackFromResultActivityCallback {
+        fun onBackFromResult(isSessionSaved: Boolean)
+    }
 
     companion object {
         const val FLAG_IS_SESSION_SAVED = 100
+        const val KEY_CURRENT_IMAGE_URI = "key_current_image_uri"
     }
 }

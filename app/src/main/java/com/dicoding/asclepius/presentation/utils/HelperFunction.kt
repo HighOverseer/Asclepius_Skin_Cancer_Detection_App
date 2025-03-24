@@ -47,7 +47,7 @@ fun Context.convertImageUriToBitmap(imageUri: Uri): Bitmap {
     }.copy(Bitmap.Config.ARGB_8888, true)
 }
 
-fun ImageView.loadImage(bitmap: Bitmap) {
+fun ImageView.loadImage(bitmap: Bitmap?) {
     Glide.with(context)
         .load(bitmap)
         .into(this)

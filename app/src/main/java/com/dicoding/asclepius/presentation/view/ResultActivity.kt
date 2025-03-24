@@ -40,6 +40,8 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDialogEventL
 
     private var progressIndicatorAnimation: WeakReference<ObjectAnimator>? = null
 
+    private var transientIsActivityOnConfigurationChanged = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -58,7 +60,6 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDialogEventL
 
         initView()
         binding.apply {
-
 
             collectLatestOnLifeCycleStarted(viewModel.uiState) {
                 val isSaveAble = viewModel.isSaveAble
@@ -88,6 +89,16 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDialogEventL
                 }
             }
         }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        transientIsActivityOnConfigurationChanged = false
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        transientIsActivityOnConfigurationChanged = true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -176,7 +187,7 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDialogEventL
         progressIndicatorAnimation?.get()?.cancel()
         val imageUri = viewModel.latestImageUri
         val isSaveAble = viewModel.isSaveAble
-        if (!didUserSavedTheSession && imageUri != null && isSaveAble) {
+        if (!didUserSavedTheSession && imageUri != null && isSaveAble && !transientIsActivityOnConfigurationChanged) {
             deleteFromFileProvider(this, uri = Uri.parse(imageUri))
         }
         super.onDestroy()
