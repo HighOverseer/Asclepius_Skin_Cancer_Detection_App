@@ -1,17 +1,12 @@
 <resources>
     <string name="app_name">Asclepius</string>
-    <string name="camera_x">CameraX</string>
-    <string name="camera">Kamera</string>
-    <string name="gallery">Galeri</string>
     <string name="analyze">Analyze</string>
-    <string name="result">Hasil Analisis</string>
     <string name="tflite_initialization_with_gpu_delegate_failed">Tflite Initialization with GPU Delegate failed..</string>
     <string name="permission_granted_will_proceed">Permission Granted. Will Proceed..</string>
     <string name="need_permission_to_use_this_feature">Need Permission to Use this Feature</string>
     <string name="please_select_an_image_first">Please Select an Image First..</string>
     <string name="sorry_something_went_wrong_pleasy_try_again">Sorry something went wrong, pleasy try again..</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string name="riwayat">History</string>
     <string name="prediksi">Analysis</string>
     <string name="informasi">Information</string>
@@ -23,55 +18,23 @@
     <string name="give_this_session_a_name_before_saving_it">Give this session a name before saving it!</string>
     <string name="prediction_result_is_saved">Prediction Result is Saved</string>
     <string name="search_your_session_history_here">Search your session history here..</string>
-    <string name="something_went_wrong_try_again">Something went wrong, Try Again..</string>
+
     <string name="author">Author</string>
     <string name="some_interesting_information_about_cancer_that_you_might_want_to_know">Some Interesting Information About Cancer That You Might Want To Know</string>
     <string name="ambil_foto_untuk_dianalisis">Take Photo For Analysis</string>
     <string name="taking_image_successfully">Taking Image Successfully</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
-
-    <string name="lorem_ipsum">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
-        volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
-        dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad
-        litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse blandit eleifend
-        diam, vel rutrum tellus vulputate quis. Aliquam eget libero aliquet, imperdiet nisl a,
-        ornare ex. Sed rhoncus est ut libero porta lobortis. Fusce in dictum tellus.\n\n
-        Suspendisse interdum ornare ante. Aliquam nec cursus lorem. Morbi id magna felis. Vivamus
-        egestas, est a condimentum egestas, turpis nisl iaculis ipsum, in dictum tellus dolor sed
-        neque. Morbi tellus erat, dapibus ut sem a, iaculis tincidunt dui. Interdum et malesuada
-        fames ac ante ipsum primis in faucibus. Curabitur et eros porttitor, ultricies urna vitae,
-        molestie nibh. Phasellus at commodo eros, non aliquet metus. Sed maximus nisl nec dolor
-        bibendum, vel congue leo egestas.\n\n
-        Sed interdum tortor nibh, in sagittis risus mollis quis. Curabitur mi odio, condimentum sit
-        amet auctor at, mollis non turpis. Nullam pretium libero vestibulum, finibus orci vel,
-        molestie quam. Fusce blandit tincidunt nulla, quis sollicitudin libero facilisis et. Integer
-        interdum nunc ligula, et fermentum metus hendrerit id. Vestibulum lectus felis, dictum at
-        lacinia sit amet, tristique id quam. Cras eu consequat dui. Suspendisse sodales nunc ligula,
-        in lobortis sem porta sed. Integer id ultrices magna, in luctus elit. Sed a pellentesque
-        est.\n\n
-        Aenean nunc velit, lacinia sed dolor sed, ultrices viverra nulla. Etiam a venenatis nibh.
-        Morbi laoreet, tortor sed facilisis varius, nibh orci rhoncus nulla, id elementum leo dui
-        non lorem. Nam mollis ipsum quis auctor varius. Quisque elementum eu libero sed commodo. In
-        eros nisl, imperdiet vel imperdiet et, scelerisque a mauris. Pellentesque varius ex nunc,
-        quis imperdiet eros placerat ac. Duis finibus orci et est auctor tincidunt. Sed non viverra
-        ipsum. Nunc quis augue egestas, cursus lorem at, molestie sem. Morbi a consectetur ipsum, a
-        placerat diam. Etiam vulputate dignissim convallis. Integer faucibus mauris sit amet finibus
-        convallis.\n\n
-        Phasellus in aliquet mi. Pellentesque habitant morbi tristique senectus et netus et
-        malesuada fames ac turpis egestas. In volutpat arcu ut felis sagittis, in finibus massa
-        gravida. Pellentesque id tellus orci. Integer dictum, lorem sed efficitur ullamcorper,
-        libero justo consectetur ipsum, in mollis nisl ex sed nisl. Donec maximus ullamcorper
-        sodales. Praesent bibendum rhoncus tellus nec feugiat. In a ornare nulla. Donec rhoncus
-        libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
-        vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
-    </string>
     <string name="no_analysis_history_yet">No Analysis History Yet</string>
     <string name="hasil_analisis">Hasil Analisis</string>
     <string name="write_yout_note_here">Write yout note here....</string>
+    <string name="date">Date</string>
+    <string name="result">Result</string>
+    <string name="note">Note</string>
+    <string name="close">Close</string>
+    <string name="logo">Logo</string>
+    <string name="gallery">Gallery</string>
+    <string name="camera">Camera</string>
+    <string name="news_item">News Item</string>
+    <string name="news_item_image">News Item Image</string>
+    <string name="history_image">History Image</string>
 
 </resources>

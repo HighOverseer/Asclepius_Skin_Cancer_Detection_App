@@ -20,7 +20,6 @@ import com.dicoding.asclepius.presentation.utils.collectLatestOnLifeCycleStarted
 import com.dicoding.asclepius.presentation.utils.convertImageUriToReducedBitmap
 import com.dicoding.asclepius.presentation.utils.deleteFromFileProvider
 import com.dicoding.asclepius.presentation.utils.formatToPercentage
-import com.dicoding.asclepius.presentation.utils.getColorFromAttr
 import com.dicoding.asclepius.presentation.utils.loadImage
 import com.dicoding.asclepius.presentation.utils.showToast
 import com.dicoding.asclepius.presentation.viewmodel.ResultViewModel
@@ -57,7 +56,6 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDialogEventL
             insets
         }
 
-        // TODO: Menampilkan hasil gambar, prediksi, dan confidence score.
         initView()
         binding.apply {
 
@@ -110,7 +108,12 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDialogEventL
 
         binding.apply {
             content.apply {
-                toolbarLayout.setExpandedTitleColor(getColorFromAttr(android.R.attr.colorPrimary))
+                toolbarLayout.setExpandedTitleColor(
+                    resources.getColor(
+                        R.color.black_50,
+                        null
+                    )
+                )
                 toolbarLayout.setCollapsedTitleTextColor(
                     resources.getColor(
                         R.color.white_100,

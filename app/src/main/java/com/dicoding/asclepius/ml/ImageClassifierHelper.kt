@@ -78,7 +78,6 @@ class ImageClassifierHelper(
     }
 
     fun classifyStaticImage(imageUri: Uri) {
-        // TODO: mengklasifikasikan imageUri dari gambar statis.
 
         if (imageClassifier == null) {
             setupImageClassifier()

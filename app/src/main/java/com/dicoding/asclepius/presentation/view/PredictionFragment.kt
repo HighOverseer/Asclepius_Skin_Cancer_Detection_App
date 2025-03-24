@@ -272,7 +272,7 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
     }
 
     private fun analyzeImage() {
-        // TODO: Menganalisa gambar yang berhasil ditampilkan.
+
         val imageUri = currentImageUri
         if (imageUri == null) {
             showToast(getString(R.string.please_select_an_image_first))
@@ -308,7 +308,6 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
     }
 
     private fun showImage() {
-        // TODO: Menampilkan gambar sesuai Gallery yang dipilih.
         currentImageUri?.let {
             loadImageJob?.cancel()
             loadImageJob = viewLifecycleOwner.lifecycleScope.launch {
@@ -321,7 +320,6 @@ class PredictionFragment : Fragment(), ImageClassifierHelper.ClassifierListener 
     }
 
     private fun startGallery() {
-        // TODO: Mendapatkan gambar dari Gallery.
         currentImageUri?.let {
             deleteFromFileProvider(requireContext(), it)
             clearSession()

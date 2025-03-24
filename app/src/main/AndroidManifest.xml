@@ -40,7 +40,6 @@
             android:exported="true"/>
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.Material3.Light.NoActionBar"
             tools:ignore="DiscouragedApi,LockedOrientationActivity" />
 

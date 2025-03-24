@@ -33,6 +33,7 @@
         android:id="@+id/ib_close"
         android:layout_width="32dp"
         android:layout_height="32dp"
+        android:contentDescription="@string/close"
         android:src="@android:drawable/ic_menu_close_clear_cancel"
         android:background="@null"
         app:tint="@color/white"
