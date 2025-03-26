@@ -2,7 +2,7 @@ package com.dicoding.asclepius.di
 
 
 import com.dicoding.asclepius.domain.presentation.ImageClassifierHelper
-import com.dicoding.asclepius.ml.ImageClassifierHelperImpl
+import com.dicoding.asclepius.presentation.utils.ImageClassifierHelperImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

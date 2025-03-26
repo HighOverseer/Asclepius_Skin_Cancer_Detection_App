@@ -2,6 +2,7 @@ package com.dicoding.asclepius.presentation.viewmodel
 
 import android.content.Context
 import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dicoding.asclepius.R
@@ -22,6 +23,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -34,30 +36,61 @@ class PredictionViewModel @Inject constructor(
     private val imageCaptureHandler: ImageCaptureHandler,
     private val imageClassifierHelper: ImageClassifierHelper,
     private val tensorFlowLiteManager: TensorFlowLiteManager,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel(), ClassifierListener {
 
+    private val _uiState = MutableStateFlow(
+        PredictionUIState(
+            isInClassifyingProcess = savedStateHandle[IS_IN_CLASSIFYING_PROCESS] ?: false,
+            isReadyToShowLatestImage = savedStateHandle[IS_READY_TO_SHOW_LATEST_IMAGE] ?: false,
+            isStillInitializingTFLiteVision = savedStateHandle[IS_STILL_INITIALIZING_TFLITE_VISION] ?: false,
+            currentImageUriPath = savedStateHandle[CURRENT_IMAGE_URI_PATH]
+        )
+    )
 
-    private val _uiState = MutableStateFlow(PredictionUIState())
     val uiState = _uiState.asStateFlow()
 
     private val _uiEvent = Channel<PredictionUIEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    var latestCroppedImageFilePath: String? = null
+    var latestCroppedImageFilePath: String? = savedStateHandle[LATEST_CROPPED_IMAGE_PATH]
 
     init {
-        imageClassifierHelper.setClassificationListener(this)
-        viewModelScope.launch {
-            tensorFlowLiteManager.isTFLiteVisionSuccessfullyInitialized.collectLatest {
-                val isInitializing = it == null
-                _uiState.update { state ->
-                    state.copy(isStillInitializingTFLiteVision = isInitializing)
-                }
+        imageCaptureHandler.latestImageCapturedUri = savedStateHandle.get<String?>(LATEST_CAPTURED_IMAGE_URI_PATH)?.let {
+            Uri.parse(it)
+        }
 
-                if (it == false) {
-                    tensorFlowLiteManager.initTFLiteVision()
-                }
+        imageClassifierHelper.setClassificationListener(this)
+
+        viewModelScope.launch {
+            observeTfLiteInitializationStatus()
+            observeUIStateToSaveInSaveStateHandle(savedStateHandle)
+        }
+    }
+
+    private suspend fun observeTfLiteInitializationStatus() {
+        tensorFlowLiteManager.isTFLiteVisionSuccessfullyInitialized.collectLatest {
+            val isInitializing = it == null
+            _uiState.update { state ->
+                state.copy(isStillInitializingTFLiteVision = isInitializing)
             }
+
+            if (it == false) {
+                tensorFlowLiteManager.initTFLiteVision()
+            }
+        }
+    }
+
+    private suspend fun observeUIStateToSaveInSaveStateHandle(
+        savedStateHandle:SavedStateHandle
+    ){
+        _uiState.distinctUntilChanged { old, new ->  old == new }.collectLatest {
+            savedStateHandle[IS_READY_TO_SHOW_LATEST_IMAGE] = it.isReadyToShowLatestImage
+            savedStateHandle[IS_IN_CLASSIFYING_PROCESS] = it.isInClassifyingProcess
+            savedStateHandle[IS_STILL_INITIALIZING_TFLITE_VISION] = it.isStillInitializingTFLiteVision
+            savedStateHandle[CURRENT_IMAGE_URI_PATH] = it.currentImageUriPath
+            savedStateHandle[LATEST_CAPTURED_IMAGE_URI_PATH] = imageCaptureHandler.latestImageCapturedUri.toString()
+            savedStateHandle[LATEST_CROPPED_IMAGE_PATH] = latestCroppedImageFilePath
         }
     }
 
@@ -230,4 +263,12 @@ class PredictionViewModel @Inject constructor(
         imageCaptureHandler.clearLatestCapturedImageUri(context)
     }
 
+    companion object{
+        private const val IS_IN_CLASSIFYING_PROCESS = "is_in_classifying_process"
+        private const val CURRENT_IMAGE_URI_PATH = "current_image_uri_path"
+        private const val IS_READY_TO_SHOW_LATEST_IMAGE = "is_ready_to_show_latest_image"
+        private const val IS_STILL_INITIALIZING_TFLITE_VISION = "is_still_initializing_tflite_vision"
+        private const val LATEST_CROPPED_IMAGE_PATH = "latest_cropped_image_path"
+        private const val LATEST_CAPTURED_IMAGE_URI_PATH = "latest_captured_image_uri_path"
+    }
 }

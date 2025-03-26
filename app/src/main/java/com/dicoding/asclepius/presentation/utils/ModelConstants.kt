@@ -1,4 +1,4 @@
-package com.dicoding.asclepius.ml
+package com.dicoding.asclepius.presentation.utils
 
 object ModelConstants {
     const val MODEL_NAME = "cancer_classification.tflite"

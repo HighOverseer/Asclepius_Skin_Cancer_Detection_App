@@ -1,4 +1,4 @@
-package com.dicoding.asclepius.ml
+package com.dicoding.asclepius.presentation.utils
 
 import android.content.Context
 import android.net.Uri
@@ -9,7 +9,6 @@ import com.dicoding.asclepius.domain.common.StringRes
 import com.dicoding.asclepius.domain.model.ModelOutput
 import com.dicoding.asclepius.domain.presentation.ClassifierListener
 import com.dicoding.asclepius.domain.presentation.ImageClassifierHelper
-import com.dicoding.asclepius.presentation.utils.convertImageUriToBitmap
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.gpu.CompatibilityList
