@@ -5,9 +5,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.SystemClock
 import com.dicoding.asclepius.R
+import com.dicoding.asclepius.domain.common.StringRes
+import com.dicoding.asclepius.domain.model.ModelOutput
+import com.dicoding.asclepius.domain.presentation.ClassifierListener
+import com.dicoding.asclepius.domain.presentation.ImageClassifierHelper
 import com.dicoding.asclepius.presentation.utils.convertImageUriToBitmap
-import com.google.android.gms.tflite.client.TfLiteInitializationOptions
-import com.google.android.gms.tflite.gpu.support.TfLiteGpu
+import dagger.hilt.android.qualifiers.ApplicationContext
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.gpu.CompatibilityList
 import org.tensorflow.lite.support.common.ops.CastOp
@@ -15,43 +18,24 @@ import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.task.core.BaseOptions
-import org.tensorflow.lite.task.gms.vision.TfLiteVision
-import org.tensorflow.lite.task.gms.vision.classifier.Classifications
 import org.tensorflow.lite.task.gms.vision.classifier.ImageClassifier
 import org.tensorflow.lite.task.gms.vision.classifier.ImageClassifier.ImageClassifierOptions
+import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
+class ImageClassifierHelperImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
+) : ImageClassifierHelper {
 
-class ImageClassifierHelper(
-    private val threshold: Float = ModelConstants.THRESHOLD,
-    private val maxResults: Int = ModelConstants.MAX_RESULTS,
-    private val modelName: String = ModelConstants.MODEL_NAME,
-    private val context: Context,
-    private val classificationListener: ClassifierListener? = null
-) {
+    private var classificationListener: ClassifierListener? = null
 
     private var imageClassifier: ImageClassifier? = null
 
-    init {
-        TfLiteGpu.isGpuDelegateAvailable(context).onSuccessTask { gpuAvailable ->
-            val optionsBuilder = TfLiteInitializationOptions.builder()
-
-            if (gpuAvailable) {
-                optionsBuilder.setEnableGpuDelegateSupport(true)
-            }
-            TfLiteVision.initialize(context, optionsBuilder.build())
-        }.addOnSuccessListener {
-            setupImageClassifier()
-        }.addOnFailureListener {
-            classificationListener?.onError(
-                context.getString(R.string.tflite_initialization_with_gpu_delegate_failed)
-            )
-        }
-    }
-
     private fun setupImageClassifier() {
         val optionsBuilder = ImageClassifierOptions.builder()
-            .setScoreThreshold(threshold)
-            .setMaxResults(maxResults)
+            .setScoreThreshold(ModelConstants.THRESHOLD)
+            .setMaxResults(ModelConstants.MAX_RESULTS)
 
         val baseOptionsBuilder = BaseOptions.builder()
 
@@ -68,16 +52,19 @@ class ImageClassifierHelper(
         try {
             imageClassifier = ImageClassifier.createFromFileAndOptions(
                 context,
-                modelName,
+                ModelConstants.MODEL_NAME,
                 optionsBuilder.build()
             )
         } catch (e: IllegalStateException) {
-            classificationListener?.onError(e.message.toString())
+            classificationListener?.onError(
+                StringRes.Dynamic(e.message.toString())
+            )
             e.printStackTrace()
         }
     }
 
-    fun classifyStaticImage(imageUri: Uri) {
+    override fun classifyStaticImage(imageUriPath: String) {
+        val imageUri = Uri.parse(imageUriPath) ?: return
 
         if (imageClassifier == null) {
             setupImageClassifier()
@@ -102,18 +89,34 @@ class ImageClassifierHelper(
         var inferenceTime = SystemClock.uptimeMillis()
         val results = imageClassifier?.classify(tensorImage)
         inferenceTime = SystemClock.uptimeMillis() - inferenceTime
-        classificationListener?.onResult(
-            results,
-            inferenceTime
+
+        results?.let {
+            if (it.isNotEmpty() && it[0].categories.isNotEmpty()) {
+                val sortedCategories = it[0].categories.sortedByDescending { category ->
+                    category?.score
+                }
+                val outputs = sortedCategories.map { category ->
+                    ModelOutput(
+                        label = category.label,
+                        confidenceScore = category.score
+                    )
+                }
+                classificationListener?.onResult(
+                    imageUri,
+                    outputs,
+                    inferenceTime
+                )
+            } else {
+                classificationListener?.onError(
+                    StringRes.Static(R.string.result_empty_please_try_again)
+                )
+            }
+        } ?: classificationListener?.onError(
+            StringRes.Static(R.string.result_empty_please_try_again)
         )
     }
 
-    interface ClassifierListener {
-        fun onResult(
-            results: List<Classifications>?,
-            inferenceTime: Long
-        )
-
-        fun onError(error: String)
+    override fun setClassificationListener(listener: ClassifierListener) {
+        classificationListener = listener
     }
 }

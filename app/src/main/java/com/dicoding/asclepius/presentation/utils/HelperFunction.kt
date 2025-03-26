@@ -11,7 +11,6 @@ import android.provider.MediaStore
 import android.util.TypedValue
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -53,7 +52,7 @@ fun ImageView.loadImage(bitmap: Bitmap?) {
         .into(this)
 }
 
-fun ImageView.loadImage(imageUri: Uri) {
+fun ImageView.loadImage(imageUri: Uri?) {
     Glide.with(context)
         .load(imageUri)
         .into(this)
@@ -72,7 +71,6 @@ fun ImageView.cancelRequest() {
 private const val MAX_IMAGE_SIZE_KB = 512 * 1000
 suspend fun Context.convertImageUriToReducedBitmap(imageUri: Uri): Bitmap =
     withContext(Dispatchers.Default) {
-
         val bitmap = convertImageUriToBitmap(imageUri)
 
         ensureActive()
@@ -104,7 +102,7 @@ fun Float.formatToPercentage(): String {
     return NumberFormat.getPercentInstance().format(this)
 }
 
-fun AppCompatActivity.showToast(message: String) {
+fun Context.showToast(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }
 

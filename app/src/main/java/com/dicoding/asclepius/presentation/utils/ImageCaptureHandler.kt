@@ -2,10 +2,11 @@ package com.dicoding.asclepius.presentation.utils
 
 import android.content.Context
 import android.net.Uri
+import javax.inject.Inject
 
 const val AUTHORITY = "com.dicoding.asclepius.fileprovider"
 
-class ImageCaptureHandler {
+class ImageCaptureHandler @Inject constructor() {
     var latestImageCapturedUri: Uri? = null
 
 

@@ -37,5 +37,7 @@
     <string name="news_item_image">News Item Image</string>
     <string name="history_image">History Image</string>
     <string name="result_empty_please_try_again">Result empty, please try again</string>
+    <string name="tflite_vision_task_failed_to_initialize">TFLite Vision Task failed to initialize</string>
+    <string name="still_initializing_prediction_process">Still Initializing Prediction Process</string>
 
 </resources>
