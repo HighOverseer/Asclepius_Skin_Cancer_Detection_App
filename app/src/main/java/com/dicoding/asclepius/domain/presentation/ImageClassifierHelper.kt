@@ -5,4 +5,6 @@ interface ImageClassifierHelper {
     fun classifyStaticImage(imageUriPath: String)
 
     fun setClassificationListener(listener: ClassifierListener)
+
+    fun removeClassificationListener()
 }

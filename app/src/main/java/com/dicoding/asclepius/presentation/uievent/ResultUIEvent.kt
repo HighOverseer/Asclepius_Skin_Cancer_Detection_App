@@ -1,6 +1,6 @@
 package com.dicoding.asclepius.presentation.uievent
 
-import com.dicoding.asclepius.presentation.utils.UIEvent
+import com.dicoding.asclepius.presentation.utils.ui.UIEvent
 
 sealed class ResultUIEvent : UIEvent() {
     data object ShowSessionDialog : ResultUIEvent()

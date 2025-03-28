@@ -17,9 +17,9 @@ import com.dicoding.asclepius.databinding.ActivityResultBinding
 import com.dicoding.asclepius.presentation.uievent.ResultUIEvent
 import com.dicoding.asclepius.presentation.utils.collectChannelFlowWhenStarted
 import com.dicoding.asclepius.presentation.utils.collectLatestOnLifeCycleStarted
-import com.dicoding.asclepius.presentation.utils.convertImageUriToReducedBitmap
-import com.dicoding.asclepius.presentation.utils.deleteFromFileProvider
 import com.dicoding.asclepius.presentation.utils.formatToPercentage
+import com.dicoding.asclepius.presentation.utils.image.ImageCompressor
+import com.dicoding.asclepius.presentation.utils.image.ImageConverter
 import com.dicoding.asclepius.presentation.utils.loadImage
 import com.dicoding.asclepius.presentation.utils.showToast
 import com.dicoding.asclepius.presentation.viewmodel.ResultViewModel
@@ -27,6 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDialogEventListener {
@@ -42,6 +43,11 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDialogEventL
 
     private var transientIsActivityOnConfigurationChanged = false
 
+    private val imageCompressor by lazy { ImageCompressor() }
+
+    @Inject
+    lateinit var imageConverter: ImageConverter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -50,7 +56,6 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDialogEventL
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -133,8 +138,8 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDialogEventL
                 )
                 loadImageJob?.cancel()
                 loadImageJob = lifecycleScope.launch {
-                    val compressedBitmap = this@ResultActivity
-                        .convertImageUriToReducedBitmap(imageUri)
+                    val compressedBitmap =
+                        imageConverter.convertImageUriToReducedBitmap(imageUri, imageCompressor)
                     resultImage.loadImage(compressedBitmap)
                     resultText.text = output.confidenceScore.formatToPercentage()
                     tvLabel.text = output.label
@@ -188,7 +193,7 @@ class ResultActivity : AppCompatActivity(), SessionDialogFragment.OnDialogEventL
         val imageUri = viewModel.latestImageUri
         val isSaveAble = viewModel.isSaveAble
         if (!didUserSavedTheSession && imageUri != null && isSaveAble && !transientIsActivityOnConfigurationChanged) {
-            deleteFromFileProvider(this, uri = Uri.parse(imageUri))
+            viewModel.deleteFileFromFileProvider(uri = Uri.parse(imageUri))
         }
         super.onDestroy()
     }

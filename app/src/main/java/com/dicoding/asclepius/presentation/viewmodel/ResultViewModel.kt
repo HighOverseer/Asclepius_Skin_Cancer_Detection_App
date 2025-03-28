@@ -1,5 +1,6 @@
 package com.dicoding.asclepius.presentation.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +10,7 @@ import com.dicoding.asclepius.domain.model.PredictionHistory
 import com.dicoding.asclepius.presentation.uievent.ResultUIEvent
 import com.dicoding.asclepius.presentation.uistate.ResultUIState
 import com.dicoding.asclepius.presentation.utils.getCurrentDateToString
+import com.dicoding.asclepius.presentation.utils.image.FileManager
 import com.dicoding.asclepius.presentation.view.ResultActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -22,6 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ResultViewModel @Inject constructor(
     private val repository: Repository,
+    private val fileManager: FileManager,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -75,6 +78,10 @@ class ResultViewModel @Inject constructor(
         viewModelScope.launch {
             _uiEvent.send(event)
         }
+    }
+
+    fun deleteFileFromFileProvider(uri: Uri) {
+        fileManager.deleteContentUriFromFileProvider(uri)
     }
 
     fun insertPredictionHistory(sessionName: String, note: String) {

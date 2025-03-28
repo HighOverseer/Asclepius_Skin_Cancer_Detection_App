@@ -1,4 +1,4 @@
-package com.dicoding.asclepius.presentation.utils
+package com.dicoding.asclepius.presentation.utils.ui
 
 import android.content.Context
 import android.graphics.Canvas

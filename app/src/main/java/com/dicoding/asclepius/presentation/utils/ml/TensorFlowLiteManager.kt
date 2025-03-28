@@ -1,4 +1,4 @@
-package com.dicoding.asclepius.presentation.utils
+package com.dicoding.asclepius.presentation.utils.ml
 
 import android.content.Context
 import com.google.android.gms.tflite.client.TfLiteInitializationOptions

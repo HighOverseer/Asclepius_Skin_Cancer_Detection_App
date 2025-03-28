@@ -1,7 +1,7 @@
 package com.dicoding.asclepius.data.mapper
 
 import com.dicoding.asclepius.data.local.PredictionHistoryEntity
-import com.dicoding.asclepius.data.remote.ArticlesItem
+import com.dicoding.asclepius.data.remote.dto.ArticlesItem
 import com.dicoding.asclepius.data.utils.timestampToDateString
 import com.dicoding.asclepius.domain.model.CancerNewsPreview
 import com.dicoding.asclepius.domain.model.ModelOutput

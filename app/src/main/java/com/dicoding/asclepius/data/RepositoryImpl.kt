@@ -9,8 +9,8 @@ import com.dicoding.asclepius.R
 import com.dicoding.asclepius.data.local.AppDatabase
 import com.dicoding.asclepius.data.mapper.MapperDtoToModel
 import com.dicoding.asclepius.data.mapper.MapperModelToDto
-import com.dicoding.asclepius.data.remote.FailedResponseDto
 import com.dicoding.asclepius.data.remote.HealthApiService
+import com.dicoding.asclepius.data.remote.dto.FailedResponseDto
 import com.dicoding.asclepius.domain.common.Resource
 import com.dicoding.asclepius.domain.common.StringRes
 import com.dicoding.asclepius.domain.data.Repository

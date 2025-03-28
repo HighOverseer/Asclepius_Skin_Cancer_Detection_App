@@ -14,8 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity.RESULT_CANCELED
-import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -27,29 +25,36 @@ import com.dicoding.asclepius.R
 import com.dicoding.asclepius.databinding.FragmentPredictionBinding
 import com.dicoding.asclepius.domain.model.ModelOutput
 import com.dicoding.asclepius.presentation.uievent.PredictionUIEvent
-import com.dicoding.asclepius.presentation.utils.CroppedImageResult
-import com.dicoding.asclepius.presentation.utils.PickImageMediaResult
 import com.dicoding.asclepius.presentation.utils.cancelRequest
 import com.dicoding.asclepius.presentation.utils.collectChannelFlowWhenStarted
 import com.dicoding.asclepius.presentation.utils.collectLatestOnLifeCycleStarted
-import com.dicoding.asclepius.presentation.utils.convertImageUriToReducedBitmap
 import com.dicoding.asclepius.presentation.utils.getColorFromAttr
-import com.dicoding.asclepius.presentation.utils.getFile
-import com.dicoding.asclepius.presentation.utils.getFileName
 import com.dicoding.asclepius.presentation.utils.getValue
+import com.dicoding.asclepius.presentation.utils.image.CroppedImageResult
+import com.dicoding.asclepius.presentation.utils.image.ImageCompressor
+import com.dicoding.asclepius.presentation.utils.image.ImageConverter
+import com.dicoding.asclepius.presentation.utils.image.PickImageMediaResult
 import com.dicoding.asclepius.presentation.utils.loadImage
 import com.dicoding.asclepius.presentation.utils.showToast
+import com.dicoding.asclepius.presentation.utils.ui.UCropActivityResultHandler
 import com.dicoding.asclepius.presentation.viewmodel.PredictionViewModel
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class PredictionFragment : Fragment() {
+class PredictionFragment : Fragment(), UCropActivityResultHandler.OnHandleResult {
+    private val imageCompressor by lazy { ImageCompressor() }
+
+    @Inject
+    lateinit var imageConverter: ImageConverter
+    private var loadImageJob: Job? = null
+    private val uCropActivityResultHandler = UCropActivityResultHandler(this)
+
     private var binding: FragmentPredictionBinding? = null
     private val viewModel: PredictionViewModel by viewModels()
-    private var loadImageJob: Job? = null
 
     private val colorPrimary by lazy { requireContext().getColorFromAttr(android.R.attr.colorPrimary) }
     private val white100 by lazy { ContextCompat.getColor(requireContext(), R.color.white_100) }
@@ -86,6 +91,26 @@ class PredictionFragment : Fragment() {
                 else -> return
             }
         }
+    }
+
+    override fun onSuccess(resultImageUri: Uri) {
+        viewModel.handleOnResultCroppedImageSession(
+            CroppedImageResult.Success(resultImageUri.toString())
+        )
+        showToast(getString(R.string.taking_image_successfully))
+    }
+
+    override fun onError(t: Throwable) {
+        viewModel.handleOnResultCroppedImageSession(
+            CroppedImageResult.Failed
+        )
+        showToast(t.message.toString())
+    }
+
+    override fun onCanceled() {
+        viewModel.handleOnResultCroppedImageSession(
+            CroppedImageResult.Canceled
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -187,35 +212,11 @@ class PredictionFragment : Fragment() {
     )
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        when {
-            resultCode == RESULT_CANCELED -> {
-                viewModel.handleOnResultCroppedImageSession(
-                    CroppedImageResult.Canceled
-                )
-            }
-
-            resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP -> {
-                if (data == null) return
-
-                val resultImageUri = UCrop.getOutput(data) ?: return
-                viewModel.handleOnResultCroppedImageSession(
-                    CroppedImageResult.Success(resultImageUri.toString())
-                )
-                showToast(getString(R.string.taking_image_successfully))
-            }
-
-            resultCode == UCrop.RESULT_ERROR -> {
-                if (data == null) return
-
-                val error = UCrop.getError(data)
-                error?.let {
-                    viewModel.handleOnResultCroppedImageSession(
-                        CroppedImageResult.Failed
-                    )
-                    showToast(it.message.toString())
-                }
-            }
-        }
+        uCropActivityResultHandler.onActivityResult(
+            requestCode = requestCode,
+            resultCode = resultCode,
+            data = data
+        )
     }
 
     private val requestCameraPermissionLauncher = registerForActivityResult(
@@ -270,7 +271,7 @@ class PredictionFragment : Fragment() {
     }
 
     private fun moveToCropActivity(imageUriPath: String) {
-        val croppedImageFile = getFile(requireContext(), getFileName())
+        val croppedImageFile = viewModel.provideForCroppedImageFile()
         val currImageUri = Uri.parse(imageUriPath) ?: return
 
         UCrop.of(currImageUri, Uri.fromFile(croppedImageFile))
@@ -295,9 +296,10 @@ class PredictionFragment : Fragment() {
 
         if (imageUri != null) {
             loadImageJob = viewLifecycleOwner.lifecycleScope.launch {
-                val compressedBitmap = requireContext()
-                    .applicationContext
-                    .convertImageUriToReducedBitmap(imageUri)
+                val compressedBitmap = imageConverter.convertImageUriToReducedBitmap(
+                    imageUri, imageCompressor
+                )
+
                 binding?.previewImageView?.loadImage(compressedBitmap)
             }
 

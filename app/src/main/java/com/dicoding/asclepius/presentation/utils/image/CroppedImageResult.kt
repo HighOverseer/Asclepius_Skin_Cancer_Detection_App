@@ -1,4 +1,4 @@
-package com.dicoding.asclepius.presentation.utils
+package com.dicoding.asclepius.presentation.utils.image
 
 sealed class CroppedImageResult {
     data object Canceled : CroppedImageResult()

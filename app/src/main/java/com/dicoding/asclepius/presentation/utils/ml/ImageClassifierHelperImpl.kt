@@ -1,4 +1,4 @@
-package com.dicoding.asclepius.presentation.utils
+package com.dicoding.asclepius.presentation.utils.ml
 
 import android.content.Context
 import android.net.Uri
@@ -9,6 +9,7 @@ import com.dicoding.asclepius.domain.common.StringRes
 import com.dicoding.asclepius.domain.model.ModelOutput
 import com.dicoding.asclepius.domain.presentation.ClassifierListener
 import com.dicoding.asclepius.domain.presentation.ImageClassifierHelper
+import com.dicoding.asclepius.presentation.utils.image.ImageConverter
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.gpu.CompatibilityList
@@ -25,6 +26,7 @@ import javax.inject.Singleton
 @Singleton
 class ImageClassifierHelperImpl @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val imageConverter: ImageConverter
 ) : ImageClassifierHelper {
 
     private var classificationListener: ClassifierListener? = null
@@ -69,7 +71,7 @@ class ImageClassifierHelperImpl @Inject constructor(
             setupImageClassifier()
         }
 
-        val imageBitmap = context.convertImageUriToBitmap(imageUri)
+        val imageBitmap = imageConverter.convertImageUriToBitmap(imageUri)
 
         val imageProcessor = ImageProcessor.Builder()
             .add(
@@ -118,4 +120,9 @@ class ImageClassifierHelperImpl @Inject constructor(
     override fun setClassificationListener(listener: ClassifierListener) {
         classificationListener = listener
     }
+
+    override fun removeClassificationListener() {
+        classificationListener = null
+    }
+
 }

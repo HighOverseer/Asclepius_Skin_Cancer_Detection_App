@@ -53,18 +53,15 @@ class PredictionHistoryFragment : Fragment() {
                     pagingData
                 )
             }
+        }
+    }
 
-            adapter.addLoadStateListener(adapterLoadStateListener)
-
-            rvHistories.addOnScrollListener(object : OnScrollListener() {
-
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    when (newState) {
-                        RecyclerView.SCROLL_STATE_DRAGGING -> animateSlide(false)
-                        RecyclerView.SCROLL_STATE_IDLE -> animateSlide(true)
-                    }
-                }
-            })
+    private val rvScrollListener = object : OnScrollListener() {
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            when (newState) {
+                RecyclerView.SCROLL_STATE_DRAGGING -> animateSlide(false)
+                RecyclerView.SCROLL_STATE_IDLE -> animateSlide(true)
+            }
         }
     }
 
@@ -131,6 +128,8 @@ class PredictionHistoryFragment : Fragment() {
             searchBar.addTextChangedListener(
                 textWatcher
             )
+            adapter.addLoadStateListener(adapterLoadStateListener)
+            rvHistories.addOnScrollListener(rvScrollListener)
         }
     }
 
@@ -148,6 +147,7 @@ class PredictionHistoryFragment : Fragment() {
 
     override fun onDestroyView() {
         binding?.searchBar?.removeTextChangedListener(textWatcher)
+        binding?.rvHistories?.removeOnScrollListener(rvScrollListener)
         adapter.removeLoadStateListener(adapterLoadStateListener)
         super.onDestroyView()
         binding = null

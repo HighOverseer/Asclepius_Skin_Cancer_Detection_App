@@ -84,7 +84,6 @@ class SessionDialogFragment : DialogFragment() {
         latestSessionName?.let {
             listener?.onDismiss(it)
         }
-
     }
 
     override fun onCancel(dialog: DialogInterface) {

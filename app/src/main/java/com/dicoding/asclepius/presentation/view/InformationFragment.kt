@@ -13,11 +13,11 @@ import com.dicoding.asclepius.databinding.FragmentInformationBinding
 import com.dicoding.asclepius.domain.model.CancerNewsPreview
 import com.dicoding.asclepius.presentation.adapter.CancerNewsAdapter
 import com.dicoding.asclepius.presentation.uievent.InformationUIEvent
-import com.dicoding.asclepius.presentation.utils.CancerNewsItemDecoration
 import com.dicoding.asclepius.presentation.utils.collectChannelFlowWhenStarted
 import com.dicoding.asclepius.presentation.utils.collectLatestOnLifeCycleStarted
 import com.dicoding.asclepius.presentation.utils.getValue
 import com.dicoding.asclepius.presentation.utils.showToast
+import com.dicoding.asclepius.presentation.utils.ui.CancerNewsItemDecoration
 import com.dicoding.asclepius.presentation.viewmodel.InformationViewModel
 import dagger.hilt.android.AndroidEntryPoint
 

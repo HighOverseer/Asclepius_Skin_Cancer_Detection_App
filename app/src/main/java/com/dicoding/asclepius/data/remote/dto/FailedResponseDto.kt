@@ -1,4 +1,4 @@
-package com.dicoding.asclepius.data.remote
+package com.dicoding.asclepius.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
 

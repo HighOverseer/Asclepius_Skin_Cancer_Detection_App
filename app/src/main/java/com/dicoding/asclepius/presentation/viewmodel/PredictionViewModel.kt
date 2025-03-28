@@ -1,6 +1,5 @@
 package com.dicoding.asclepius.presentation.viewmodel
 
-import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -12,13 +11,12 @@ import com.dicoding.asclepius.domain.presentation.ClassifierListener
 import com.dicoding.asclepius.domain.presentation.ImageClassifierHelper
 import com.dicoding.asclepius.presentation.uievent.PredictionUIEvent
 import com.dicoding.asclepius.presentation.uistate.PredictionUIState
-import com.dicoding.asclepius.presentation.utils.CroppedImageResult
-import com.dicoding.asclepius.presentation.utils.ImageCaptureHandler
-import com.dicoding.asclepius.presentation.utils.PickImageMediaResult
-import com.dicoding.asclepius.presentation.utils.TensorFlowLiteManager
-import com.dicoding.asclepius.presentation.utils.deleteFromFileProvider
+import com.dicoding.asclepius.presentation.utils.image.CroppedImageResult
+import com.dicoding.asclepius.presentation.utils.image.FileManager
+import com.dicoding.asclepius.presentation.utils.image.ImageCaptureHandler
+import com.dicoding.asclepius.presentation.utils.image.PickImageMediaResult
+import com.dicoding.asclepius.presentation.utils.ml.TensorFlowLiteManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,22 +30,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PredictionViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val imageCaptureHandler: ImageCaptureHandler,
     private val imageClassifierHelper: ImageClassifierHelper,
     private val tensorFlowLiteManager: TensorFlowLiteManager,
+    private val fileManager: FileManager,
     savedStateHandle: SavedStateHandle,
-) : ViewModel(), ClassifierListener {
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         PredictionUIState(
-            isInClassifyingProcess = savedStateHandle[IS_IN_CLASSIFYING_PROCESS] ?: false,
-            isReadyToShowLatestImage = savedStateHandle[IS_READY_TO_SHOW_LATEST_IMAGE] ?: false,
-            isStillInitializingTFLiteVision = savedStateHandle[IS_STILL_INITIALIZING_TFLITE_VISION] ?: false,
             currentImageUriPath = savedStateHandle[CURRENT_IMAGE_URI_PATH]
         )
     )
-
     val uiState = _uiState.asStateFlow()
 
     private val _uiEvent = Channel<PredictionUIEvent>()
@@ -55,13 +49,39 @@ class PredictionViewModel @Inject constructor(
 
     var latestCroppedImageFilePath: String? = savedStateHandle[LATEST_CROPPED_IMAGE_PATH]
 
-    init {
-        imageCaptureHandler.latestImageCapturedUri = savedStateHandle.get<String?>(LATEST_CAPTURED_IMAGE_URI_PATH)?.let {
-            Uri.parse(it)
+    private val classifierListener = object : ClassifierListener {
+        override fun onResult(imageUri: Uri, outputs: List<ModelOutput>?, inferenceTime: Long) {
+            _uiState.update { it.copy(isInClassifyingProcess = false) }
+
+            viewModelScope.launch {
+                val output = outputs?.first() ?: return@launch
+                _uiEvent.send(
+                    PredictionUIEvent.OnClassificationSuccess(
+                        modelOutput = output,
+                        imageUri = imageUri
+                    )
+                )
+            }
         }
 
-        imageClassifierHelper.setClassificationListener(this)
+        override fun onError(message: StringRes) {
+            _uiState.update { it.copy(isInClassifyingProcess = false) }
 
+            viewModelScope.launch {
+                _uiEvent.send(
+                    PredictionUIEvent.OnClassificationFailed(message)
+                )
+            }
+        }
+    }
+
+    init {
+        imageCaptureHandler.latestImageCapturedUri =
+            savedStateHandle.get<String?>(LATEST_CAPTURED_IMAGE_URI_PATH)?.let {
+                Uri.parse(it)
+            }
+
+        imageClassifierHelper.setClassificationListener(classifierListener)
         viewModelScope.launch {
             observeTfLiteInitializationStatus()
             observeUIStateToSaveInSaveStateHandle(savedStateHandle)
@@ -82,14 +102,14 @@ class PredictionViewModel @Inject constructor(
     }
 
     private suspend fun observeUIStateToSaveInSaveStateHandle(
-        savedStateHandle:SavedStateHandle
-    ){
-        _uiState.distinctUntilChanged { old, new ->  old == new }.collectLatest {
-            savedStateHandle[IS_READY_TO_SHOW_LATEST_IMAGE] = it.isReadyToShowLatestImage
-            savedStateHandle[IS_IN_CLASSIFYING_PROCESS] = it.isInClassifyingProcess
-            savedStateHandle[IS_STILL_INITIALIZING_TFLITE_VISION] = it.isStillInitializingTFLiteVision
+        savedStateHandle: SavedStateHandle
+    ) {
+        _uiState.distinctUntilChanged { old, new ->
+            old.currentImageUriPath == new.currentImageUriPath
+        }.collectLatest {
             savedStateHandle[CURRENT_IMAGE_URI_PATH] = it.currentImageUriPath
-            savedStateHandle[LATEST_CAPTURED_IMAGE_URI_PATH] = imageCaptureHandler.latestImageCapturedUri.toString()
+            savedStateHandle[LATEST_CAPTURED_IMAGE_URI_PATH] =
+                imageCaptureHandler.latestImageCapturedUri.toString()
             savedStateHandle[LATEST_CROPPED_IMAGE_PATH] = latestCroppedImageFilePath
         }
     }
@@ -120,16 +140,10 @@ class PredictionViewModel @Inject constructor(
     }
 
     fun handleOnResultCroppedImageSession(result: CroppedImageResult) {
-
         when (result) {
-            CroppedImageResult.Canceled -> {
-                _uiState.update {
-                    it.copy(currentImageUriPath = null)
-                }
-                latestCroppedImageFilePath?.let {
-                    val canceledCroppedImageFile = File(it)
-                    if (canceledCroppedImageFile.exists()) canceledCroppedImageFile.delete()
-                }
+            is CroppedImageResult.Canceled -> {
+                resetSession()
+                latestCroppedImageFilePath?.let { fileManager.deleteFromFilePath(it) }
                 latestCroppedImageFilePath = null
             }
 
@@ -141,17 +155,16 @@ class PredictionViewModel @Inject constructor(
                 }
             }
 
-            CroppedImageResult.Failed -> {
-                _uiState.update {
-                    it.copy(
-                        currentImageUriPath = null
-                    )
-                }
+            is CroppedImageResult.Failed -> {
+                resetSession()
             }
         }
-
-        imageCaptureHandler.clearLatestCapturedImageUri(context)
+        imageCaptureHandler.clearLatestCapturedImageUri()
         _uiState.update { it.copy(isReadyToShowLatestImage = true) }
+    }
+
+    fun provideForCroppedImageFile(): File {
+        return fileManager.getFile()
     }
 
     fun handleOnPickImageMediaResult(result: PickImageMediaResult) {
@@ -193,7 +206,7 @@ class PredictionViewModel @Inject constructor(
                         isReadyToShowLatestImage = true
                     )
                 }
-                imageCaptureHandler.clearLatestCapturedImageUri(context)
+                imageCaptureHandler.clearLatestCapturedImageUri()
             }
         }
     }
@@ -202,29 +215,13 @@ class PredictionViewModel @Inject constructor(
         _uiState.update { it.copy(currentImageUriPath = null) }
     }
 
-    override fun onResult(imageUri: Uri, outputs: List<ModelOutput>?, inferenceTime: Long) {
-        _uiState.update { it.copy(isInClassifyingProcess = false) }
-
-        viewModelScope.launch {
-            val output = outputs?.first() ?: return@launch
-            _uiEvent.send(
-                PredictionUIEvent.OnClassificationSuccess(
-                    modelOutput = output,
-                    imageUri = imageUri
-                )
-            )
-        }
-    }
-
     fun prepareForPickingUpAnImageFromMedia() {
         val currentImagePath = _uiState.value.currentImageUriPath
 
-        _uiState.update {
-            it.copy(currentImageUriPath = null)
-        }
+        resetSession()
         currentImagePath?.let {
             Uri.parse(it)?.apply {
-                deleteFromFileProvider(context, this)
+                fileManager.deleteContentUriFromFileProvider(this)
             }
         }
         _uiState.update {
@@ -233,41 +230,30 @@ class PredictionViewModel @Inject constructor(
     }
 
     fun provideCapturedImageUriForNewSession(): Uri {
-        return imageCaptureHandler.provideCapturedImageUri(context)
-    }
-
-    override fun onError(message: StringRes) {
-        _uiState.update { it.copy(isInClassifyingProcess = false) }
-
-        viewModelScope.launch {
-            _uiEvent.send(
-                PredictionUIEvent.OnClassificationFailed(message)
-            )
-        }
+        return imageCaptureHandler.provideCapturedImageUri()
     }
 
     fun clearingAllUnusedImageUris() {
         _uiState.update {
             it.currentImageUriPath?.let { uriPath ->
                 Uri.parse(uriPath)?.apply {
-                    deleteFromFileProvider(context, this)
+                    fileManager.deleteContentUriFromFileProvider(this)
                 }
             }
             it.copy(currentImageUriPath = null)
         }
-        latestCroppedImageFilePath?.let {
-            val canceledCroppedImageFile = File(it)
-            if (canceledCroppedImageFile.exists()) canceledCroppedImageFile.delete()
-        }
+        latestCroppedImageFilePath?.let { fileManager.deleteFromFilePath(it) }
         latestCroppedImageFilePath = null
-        imageCaptureHandler.clearLatestCapturedImageUri(context)
+        imageCaptureHandler.clearLatestCapturedImageUri()
     }
 
-    companion object{
-        private const val IS_IN_CLASSIFYING_PROCESS = "is_in_classifying_process"
+    override fun onCleared() {
+        imageClassifierHelper.removeClassificationListener()
+        super.onCleared()
+    }
+
+    companion object {
         private const val CURRENT_IMAGE_URI_PATH = "current_image_uri_path"
-        private const val IS_READY_TO_SHOW_LATEST_IMAGE = "is_ready_to_show_latest_image"
-        private const val IS_STILL_INITIALIZING_TFLITE_VISION = "is_still_initializing_tflite_vision"
         private const val LATEST_CROPPED_IMAGE_PATH = "latest_cropped_image_path"
         private const val LATEST_CAPTURED_IMAGE_URI_PATH = "latest_captured_image_uri_path"
     }
